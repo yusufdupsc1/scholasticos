@@ -294,21 +294,29 @@ export function StudentsTable({ students, classes, total, pages, currentPage }: 
   }
 
   async function handleCreate() {
+    const newErrors: Record<string, string> = {};
+
     if (govtPrimaryMode) {
       const validationMessage = getGovtAdmissionValidationMessage(creating);
       if (validationMessage) {
+        setCreateErrors({ validation: validationMessage });
         toast.error(validationMessage);
         return;
       }
-    } else if (
-      !creating.studentNameEn.trim() ||
-      !creating.fatherName.trim() ||
-      !creating.motherName.trim() ||
-      !creating.guardianPhone.trim()
-    ) {
-      toast.error(t("student_required_identity_fields"));
+    } else {
+      if (!creating.studentNameEn.trim()) newErrors.studentNameEn = t("student_name_en_required");
+      if (!creating.fatherName.trim()) newErrors.fatherName = t("father_name_required");
+      if (!creating.motherName.trim()) newErrors.motherName = t("mother_name_required");
+      if (!creating.guardianPhone.trim()) newErrors.guardianPhone = t("guardian_phone_required");
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setCreateErrors(newErrors);
+      toast.error("Please fill in all required fields");
       return;
     }
+
+    setCreateErrors({});
 
     startTransition(async () => {
       try {
@@ -356,7 +364,7 @@ export function StudentsTable({ students, classes, total, pages, currentPage }: 
           throw new Error(json?.error?.message ?? "Failed to create student");
         }
 
-        toast.success("Student created");
+        toast.success(`Student created successfully`);
         const studentCredential = json?.data?.studentCredential;
         const parentCredential = json?.data?.parentCredential;
         if (studentCredential) {
@@ -373,9 +381,12 @@ export function StudentsTable({ students, classes, total, pages, currentPage }: 
         }
         setCreateOpen(false);
         resetCreateForm();
+        setCreateErrors({});
         router.refresh();
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Failed to create student");
+        const errorMsg = error instanceof Error ? error.message : "Failed to create student";
+        setCreateErrors({ submit: errorMsg });
+        toast.error(errorMsg);
       }
     });
   }
