@@ -1,12 +1,12 @@
 // src/server/actions/settings.ts
 "use server";
 
+import { auth } from "@/lib/auth";
+import { isGovtPrimaryModeEnabled } from "@/lib/config";
+import { db } from "@/lib/db";
+import { GOVT_PRIMARY_FEE_PRESETS } from "@/lib/finance/fee-presets";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { isGovtPrimaryModeEnabled } from "@/lib/config";
-import { GOVT_PRIMARY_FEE_PRESETS } from "@/lib/finance/fee-presets";
 
 const InstitutionSettingsSchema = z.object({
   academicYear: z.string().min(1, "Academic year is required"),
