@@ -14,7 +14,7 @@ import { TrustStrip } from "@/components/landing/trust-strip";
 export const metadata: Metadata = {
   title: "Dhadash — Govt. Primary School Operations",
   description:
-    "সরকারি প্রাথমিক বিদ্যালয় (১ম–৫ম শ্রেণি) এর জন্য attendance, fee, notice এবং print workflow.",
+    "সরকারি প্রাথমিক বিদ্যালয় (১ম–৫ম শ্রেণি) এর জন্য attendance, fee, notice এবং print workflow.",
   alternates: {
     canonical: "/",
   },
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-bg text-text">
+    <div className="min-h-screen bg-background text-foreground">
       <LandingHeader />
       <main>
         <Hero />

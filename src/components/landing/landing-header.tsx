@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { Shield, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Button } from "@/components/ui/button";
@@ -9,43 +10,127 @@ import { useT } from "@/lib/i18n/client";
 
 export function LandingHeader() {
   const { t } = useT();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-          </span>
-          <span className="text-sm font-bold tracking-tight sm:text-base">Dhadash</span>
+          <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+            <Shield className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-lg font-bold tracking-tight">Dhadash</span>
         </Link>
 
-        <nav aria-label="Marketing" className="hidden items-center gap-6 md:flex">
-          <a href="#features" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+        {/* Desktop Navigation */}
+        <nav
+          aria-label="Marketing"
+          className="hidden items-center gap-8 md:flex"
+        >
+          <a
+            href="#features"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
             ফিচার
           </a>
-          <a href="#pricing" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-            প্ল্যান
+          <a
+            href="#pricing"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            মূল্য
           </a>
-          <a href="#testimonials" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+          <a
+            href="#testimonials"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
             মতামত
+          </a>
+          <a
+            href="#contact"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            যোগাযোগ
           </a>
         </nav>
 
-        <div className="flex items-center gap-2">
+        {/* Right side */}
+        <div className="flex items-center gap-3">
           <LanguageToggle />
-          <Button asChild variant="ghost" className="hidden sm:inline-flex">
-            <Link href="/auth/login" prefetch={false}>
-              লগইন
-            </Link>
-          </Button>
-          <Button asChild className="primary-cta rounded-full px-5">
-            <Link href="/#demo-booking" prefetch={false}>
-              {t("demo_cta")}
-            </Link>
+
+          {/* Desktop buttons */}
+          <div className="hidden sm:flex items-center gap-2">
+            <Button asChild variant="ghost" className="font-medium">
+              <Link href="/auth/login" prefetch={false}>
+                লগইন
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="rounded-full px-5 font-medium shadow-md shadow-primary/20"
+            >
+              <Link href="/#demo-booking" prefetch={false}>
+                ডেমো বুক
+              </Link>
+            </Button>
+          </div>
+
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>
+
+      {/* Mobile Navigation */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl">
+          <nav className="flex flex-col p-4 space-y-2">
+            <a
+              href="#features"
+              className="px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              ফিচার
+            </a>
+            <a
+              href="#pricing"
+              className="px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              মূল্য
+            </a>
+            <a
+              href="#testimonials"
+              className="px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              মতামত
+            </a>
+            <div className="flex gap-2 pt-2">
+              <Button asChild variant="outline" className="flex-1">
+                <Link href="/auth/login" prefetch={false}>
+                  লগইন
+                </Link>
+              </Button>
+              <Button asChild className="flex-1">
+                <Link href="/#demo-booking" prefetch={false}>
+                  ডেমো বুক
+                </Link>
+              </Button>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

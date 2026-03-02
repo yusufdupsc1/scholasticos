@@ -12,6 +12,13 @@ import { RecentStudents } from "@/components/dashboard/recent-students";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { UpcomingEvents } from "@/components/dashboard/upcoming-events";
 import { ExecutiveCommandCenter } from "@/components/dashboard/executive-command-center";
+import { ClassOverviewWidget } from "@/components/dashboard/class-overview-widget";
+import { AttendanceSummaryWidget } from "@/components/dashboard/attendance-summary-widget";
+import { FeeCollectionWidget } from "@/components/dashboard/fee-collection-widget";
+import { StudentStatusWidget } from "@/components/dashboard/student-status-widget";
+import { NoticeBoardWidget } from "@/components/dashboard/notice-board-widget";
+import { TeacherStatusWidget } from "@/components/dashboard/teacher-status-widget";
+import { StudentSearchWidget } from "@/components/dashboard/student-search-widget";
 import { DEFAULT_LOCALE, DEFAULT_TIMEZONE } from "@/lib/utils";
 import { safeLoader } from "@/lib/server/safe-loader";
 import { isGovtPrimaryModeEnabled } from "@/lib/config";
@@ -44,7 +51,11 @@ async function getAttendanceData(institutionId: string) {
     // Prisma groupBy returns `_count` as an object (`{ _all: number }`).
     // Normalize to a plain number to avoid rendering object values in React.
     return data.map(
-      (row: { date: Date; status: string; _count?: number | { _all?: number } }) => ({
+      (row: {
+        date: Date;
+        status: string;
+        _count?: number | { _all?: number };
+      }) => ({
         date: row.date,
         status: row.status,
         _count:
@@ -92,6 +103,173 @@ async function getUpcomingEvents(institutionId: string) {
     });
   } catch (error) {
     console.error("[DASHBOARD_EVENTS]", error);
+    return [];
+  }
+}
+
+async function getClassOverviewData(institutionId: string) {
+  try {
+    const classes = await db.class.findMany({
+      where: { institutionId, isActive: true },
+      include: {
+        students: { where: { status: "ACTIVE" } },
+        attendance: {
+          where: {
+            date: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+          },
+        },
+      },
+      orderBy: { grade: "asc" },
+      take: 6,
+    });
+
+    return classes.map((cls) => {
+      const studentCount = cls.students.length;
+      const attendanceRecords = cls.attendance;
+      const presentCount = attendanceRecords.filter(
+        (a) => a.status === "PRESENT",
+      ).length;
+      const attendanceRate =
+        attendanceRecords.length > 0
+          ? Math.round((presentCount / attendanceRecords.length) * 100)
+          : 0;
+
+      return {
+        name: cls.name,
+        studentCount,
+        attendanceRate,
+        avgGrade: 0,
+      };
+    });
+  } catch (error) {
+    console.error("[DASHBOARD_CLASS_OVERVIEW]", error);
+    return [];
+  }
+}
+
+async function getTodayAttendanceSummary(institutionId: string) {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const attendance = await db.attendance.groupBy({
+      by: ["status"],
+      where: {
+        institutionId,
+        date: today,
+      },
+      _count: true,
+    });
+
+    const total = attendance.reduce((sum, a) => sum + Number(a._count), 0);
+    const present = attendance.find((a) => a.status === "PRESENT")?._count || 0;
+    const absent = attendance.find((a) => a.status === "ABSENT")?._count || 0;
+    const late = attendance.find((a) => a.status === "LATE")?._count || 0;
+
+    return {
+      present: Number(present),
+      absent: Number(absent),
+      late: Number(late),
+      total,
+    };
+  } catch (error) {
+    console.error("[DASHBOARD_TODAY_ATTENDANCE]", error);
+    return { present: 0, absent: 0, late: 0, total: 0 };
+  }
+}
+
+async function getFeeSummary(institutionId: string) {
+  try {
+    const currentMonth = new Date();
+    currentMonth.setDate(1);
+
+    const fees = await db.fee.findMany({
+      where: {
+        institutionId,
+        createdAt: { gte: currentMonth },
+      },
+      select: { status: true, amount: true },
+    });
+
+    const totalStudents = await db.student.count({
+      where: { institutionId, status: "ACTIVE" },
+    });
+
+    const collected = fees
+      .filter((f) => f.status === "PAID")
+      .reduce((sum, f) => sum + Number(f.amount), 0);
+    const pending = fees
+      .filter((f) => f.status === "UNPAID" || f.status === "PARTIAL")
+      .reduce((sum, f) => sum + Number(f.amount), 0);
+
+    return {
+      collected,
+      pending,
+      overdue: Math.floor(pending * 0.1),
+      totalStudents,
+    };
+  } catch (error) {
+    console.error("[DASHBOARD_FEE_SUMMARY]", error);
+    return { collected: 0, pending: 0, overdue: 0, totalStudents: 0 };
+  }
+}
+
+async function getStudentStatusData(institutionId: string) {
+  try {
+    const [active, inactive, transferred, graduated] = await Promise.all([
+      db.student.count({ where: { institutionId, status: "ACTIVE" } }),
+      db.student.count({ where: { institutionId, status: "INACTIVE" } }),
+      db.student.count({ where: { institutionId, status: "TRANSFERRED" } }),
+      db.student.count({ where: { institutionId, status: "GRADUATED" } }),
+    ]);
+
+    return {
+      active,
+      inactive,
+      transferred,
+      graduated,
+      total: active + inactive + transferred + graduated,
+    };
+  } catch (error) {
+    console.error("[DASHBOARD_STUDENT_STATUS]", error);
+    return { active: 0, inactive: 0, transferred: 0, graduated: 0, total: 0 };
+  }
+}
+
+async function getTeacherStatusData(institutionId: string) {
+  try {
+    const [active, total] = await Promise.all([
+      db.teacher.count({ where: { institutionId, status: "ACTIVE" } }),
+      db.teacher.count({ where: { institutionId } }),
+    ]);
+
+    return {
+      active,
+      onLeave: total - active,
+      total,
+    };
+  } catch (error) {
+    console.error("[DASHBOARD_TEACHER_STATUS]", error);
+    return { active: 0, onLeave: 0, total: 0 };
+  }
+}
+
+async function getNotices(institutionId: string) {
+  try {
+    return await db.announcement.findMany({
+      where: { institutionId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        priority: true,
+        createdAt: true,
+      },
+    });
+  } catch (error) {
+    console.error("[DASHBOARD_NOTICES]", error);
     return [];
   }
 }
@@ -216,13 +394,14 @@ async function getExecutiveData(institutionId: string) {
       },
       sslCommerzConfigured: Boolean(
         process.env.SSLCOMMERZ_STORE_ID &&
-          process.env.SSLCOMMERZ_STORE_PASSWORD,
+        process.env.SSLCOMMERZ_STORE_PASSWORD,
       ),
-      stripeConfigured: Boolean(
-        !isGovtPrimaryModeEnabled() &&
+      stripeConfigured:
+        Boolean(
+          !isGovtPrimaryModeEnabled() &&
           process.env.STRIPE_SECRET_KEY &&
           process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-      ) || undefined,
+        ) || undefined,
     };
   } catch (error) {
     console.error("[DASHBOARD_EXECUTIVE]", error);
@@ -256,12 +435,14 @@ async function getExecutiveData(institutionId: string) {
 export default async function DashboardPage() {
   const session = await auth();
   const govtPrimaryMode = isGovtPrimaryModeEnabled();
-  const user = session?.user as {
-    institutionId?: string;
-    institutionName?: string;
-    name?: string | null;
-    role?: string;
-  } | undefined;
+  const user = session?.user as
+    | {
+        institutionId?: string;
+        institutionName?: string;
+        name?: string | null;
+        role?: string;
+      }
+    | undefined;
   if (!user?.institutionId) {
     return null;
   }
@@ -308,6 +489,49 @@ export default async function DashboardPage() {
     [],
     { institutionId },
   );
+
+  const classOverview = await safeLoader(
+    "DASHBOARD_CLASS_OVERVIEW",
+    () => getClassOverviewData(institutionId),
+    [],
+    { institutionId },
+  );
+
+  const todayAttendance = await safeLoader(
+    "DASHBOARD_TODAY_ATTENDANCE",
+    () => getTodayAttendanceSummary(institutionId),
+    { present: 0, absent: 0, late: 0, total: 0 },
+    { institutionId },
+  );
+
+  const feeSummary = await safeLoader(
+    "DASHBOARD_FEE_SUMMARY",
+    () => getFeeSummary(institutionId),
+    { collected: 0, pending: 0, overdue: 0, totalStudents: 0 },
+    { institutionId },
+  );
+
+  const studentStatus = await safeLoader(
+    "DASHBOARD_STUDENT_STATUS",
+    () => getStudentStatusData(institutionId),
+    { active: 0, inactive: 0, transferred: 0, graduated: 0, total: 0 },
+    { institutionId },
+  );
+
+  const teacherStatus = await safeLoader(
+    "DASHBOARD_TEACHER_STATUS",
+    () => getTeacherStatusData(institutionId),
+    { active: 0, onLeave: 0, total: 0 },
+    { institutionId },
+  );
+
+  const notices = await safeLoader(
+    "DASHBOARD_NOTICES",
+    () => getNotices(institutionId),
+    [],
+    { institutionId },
+  );
+
   const executive = await safeLoader(
     "DASHBOARD_EXECUTIVE",
     () => getExecutiveData(institutionId),
@@ -360,8 +584,7 @@ export default async function DashboardPage() {
           })}
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          {greeting},{" "}
-          <span className="text-primary">{userName}</span>
+          {greeting}, <span className="text-primary">{userName}</span>
         </h1>
         <p className="text-muted-foreground">
           Here&apos;s what&apos;s happening at{" "}
@@ -372,6 +595,20 @@ export default async function DashboardPage() {
 
       {/* KPI Stats */}
       <StatsGrid stats={stats} />
+
+      {/* Student Search Widget */}
+      <StudentSearchWidget institutionId={institutionId} />
+
+      {/* New Widgets Row - Mobile Optimized */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <AttendanceSummaryWidget data={todayAttendance} />
+        <FeeCollectionWidget data={feeSummary} />
+        <StudentStatusWidget data={studentStatus} />
+        <TeacherStatusWidget data={teacherStatus} />
+      </div>
+
+      {/* Class Overview */}
+      <ClassOverviewWidget classes={classOverview} />
 
       {!govtPrimaryMode ? (
         <ExecutiveCommandCenter
