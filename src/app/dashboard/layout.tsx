@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar } from "@/components/layout/topbar";
-import { MobileNav } from "@/components/layout/mobile-nav";
+import { MobileNavServer } from "@/components/layout/mobile-nav.server";
 import { AppToaster } from "@/components/layout/app-toaster";
 import type { Metadata } from "next";
 
@@ -47,7 +47,7 @@ export default async function DashboardLayout({
         </div>
 
         {/* Mobile Nav */}
-        <MobileNav session={session} />
+        <MobileNavServer session={session} />
       </div>
       <AppToaster />
     </>
