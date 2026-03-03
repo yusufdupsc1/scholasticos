@@ -25,6 +25,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "analyze": "ANALYZE=true next build",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -70,6 +71,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.6",
     "@playwright/test": "^1.49.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.10.2",
