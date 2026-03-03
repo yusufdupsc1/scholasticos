@@ -63,7 +63,7 @@ async function main() {
     create: {
       name: "ধাদাশ সরকারি প্রাথমিক বিদ্যালয়",
       slug: "dhadash-demo",
-      email: "admin@school.edu",
+      email: "admin@dhadash-gps.vercel.com",
       phone: "+8801700000000",
       address: "123 Innovation Way",
       city: "Dhaka",
@@ -103,7 +103,7 @@ async function main() {
   });
 
   // ── Admin User ───────────────────────────────
-  const hashedPassword = await bcryptjs.hash("admin123", 12);
+  const hashedPassword = await bcryptjs.hash("DH_Admin2026", 12);
   const adminUser = await db.user.upsert({
     where: { email: "admin@school.edu" },
     update: {
@@ -116,7 +116,7 @@ async function main() {
     },
     create: {
       name: "DH_Admin",
-      email: "admin@school.edu",
+      email: "admin@dhadash-gps.vercel.com",
       password: hashedPassword,
       role: Role.ADMIN,
       emailVerified: new Date(),
@@ -643,7 +643,7 @@ async function main() {
 
   console.log("\n🎉 Seeding complete!\n");
   console.log("Demo credentials:");
-  console.log("  Admin:     admin@school.edu / admin123");
+  console.log("  Admin:     admin@dhadash-gps.vercel.com / DH_Admin2026");
   console.log("  Principal: principal@school.edu / principal123");
 }
 

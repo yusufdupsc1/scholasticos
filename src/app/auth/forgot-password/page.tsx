@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
                     type="email"
                     autoComplete="email"
                     autoFocus
-                    placeholder="admin@school.edu"
+                    placeholder="admin@dhadash-gps.vercel.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
