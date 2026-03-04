@@ -6,6 +6,9 @@ test.describe("Authentication Flows", () => {
     await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
 
     await expect(
+      page.locator(".govt-top-band__segment--center .govt-top-band__title"),
+    ).toHaveText(/গণপ্রজাতন্ত্রী বাংলাদেশ সরকার/i);
+    await expect(
       page.getByRole("heading", { name: "Welcome back" }),
     ).toBeVisible();
     await expect(

@@ -404,16 +404,68 @@
   }
 
   .govt-top-band {
-    background:
-      linear-gradient(
-        90deg,
-        #006a4e 0%,
-        #006a4e 30%,
-        #da291c 30%,
-        #da291c 70%,
-        #006a4e 70%,
-        #006a4e 100%
-      );
+    display: grid;
+    grid-template-columns: 3fr 4fr 3fr;
+    width: 100%;
+    color: #fff;
+    border-bottom: 1px solid rgb(255 255 255 / 0.22);
+  }
+
+  .govt-top-band__segment {
+    min-width: 0;
+    min-height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem 0.45rem;
+  }
+
+  .govt-top-band__segment--left,
+  .govt-top-band__segment--right {
+    background: #006a4e;
+  }
+
+  .govt-top-band__segment--center {
+    background: #da291c;
+    margin-inline: clamp(0.16rem, 0.55vw, 0.48rem);
+    border-radius: 9999px;
+  }
+
+  .govt-top-band__title {
+    text-align: center;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    font-size: clamp(0.56rem, 2.45vw, 0.72rem);
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .govt-top-band__meta {
+    max-width: 100%;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.1;
+    font-size: clamp(0.5rem, 1.35vw, 0.67rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.98;
+  }
+
+  @media (max-width: 640px) {
+    .govt-top-band__segment {
+      min-height: 2.2rem;
+      padding-inline: 0.3rem;
+    }
+
+    .govt-top-band__meta {
+      display: none;
+    }
+
+    .govt-top-band__title {
+      font-size: clamp(0.53rem, 2.6vw, 0.66rem);
+    }
   }
 
   .govt-slab-border {

@@ -434,7 +434,7 @@ export function LoginForm({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in sm:space-y-6">
       <div className="rounded-xl border border-[#006a4e]/15 bg-[#f6fbf9] p-3">
         <p className="flex items-center gap-2 text-xs font-semibold text-[#006a4e]">
           <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
@@ -455,7 +455,7 @@ export function LoginForm({
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-1.5">
           <Label>Login Scope</Label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
             {SCOPE_OPTIONS.map((scope) => (
               <button
                 key={scope.value}
@@ -487,7 +487,7 @@ export function LoginForm({
 
         <div className="space-y-1.5">
           <Label>Sign in Method</Label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
             <button
               type="button"
               onClick={() =>
@@ -624,7 +624,7 @@ export function LoginForm({
           <>
             <div className="space-y-1.5">
               <Label htmlFor="phone">Approved Phone Number</Label>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <Input
                   id="phone"
                   type="tel"
@@ -643,6 +643,7 @@ export function LoginForm({
                   variant="outline"
                   onClick={handleSendOtp}
                   disabled={isPending || isSendingOtp || otpCooldown > 0}
+                  className="w-full sm:w-auto"
                 >
                   {isSendingOtp ? (
                     <Loader2 className="mr-1 h-4 w-4 animate-spin" />
@@ -711,7 +712,7 @@ export function LoginForm({
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             Smart utilities
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
             <button
               type="button"
               onClick={() =>
@@ -792,13 +793,13 @@ export function LoginForm({
         </p>
         <div className="space-y-1 font-mono text-sm text-foreground/80">
           <div className="flex justify-between items-center group">
-              <span>admin@school.edu</span>
+            <span className="max-w-[65%] truncate">admin@school.edu</span>
             <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
               admin123
             </span>
           </div>
           <div className="flex justify-between items-center group">
-            <span>principal@school.edu</span>
+            <span className="max-w-[65%] truncate">principal@school.edu</span>
             <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
               principal123
             </span>

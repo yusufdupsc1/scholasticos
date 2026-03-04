@@ -28,18 +28,25 @@ export default async function LoginPage({
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="govt-top-band">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-1.5 text-[11px] font-semibold text-white sm:px-8">
-          <span>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</span>
-          <span className="hidden sm:inline">
+      <div className="govt-top-band" aria-label="Government identity strip">
+        <div className="govt-top-band__segment govt-top-band__segment--left">
+          <span className="govt-top-band__meta">National Education Service</span>
+        </div>
+        <div className="govt-top-band__segment govt-top-band__segment--center">
+          <span className="govt-top-band__title">
+            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার
+          </span>
+        </div>
+        <div className="govt-top-band__segment govt-top-band__segment--right">
+          <span className="govt-top-band__meta">
             Ministry of Primary and Mass Education
           </span>
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 sm:py-12">
-        <div className="grid gap-8 lg:grid-cols-[1fr_440px]">
-          <section className="rounded-2xl border border-[#006a4e]/15 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10 md:px-8 md:py-12">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,440px)] xl:gap-8">
+          <section className="rounded-2xl border border-[#006a4e]/15 bg-white p-5 shadow-sm sm:p-7 lg:p-8">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#006a4e]/20 bg-[#006a4e]/10 px-3 py-1 text-xs font-semibold text-[#006a4e]">
               <Landmark className="h-3.5 w-3.5" aria-hidden="true" />
               Official Government Authority
@@ -119,7 +126,7 @@ export default async function LoginPage({
             </div>
           </section>
 
-          <section className="rounded-2xl border border-[#006a4e]/15 bg-white p-6 shadow-sm sm:p-7">
+          <section className="rounded-2xl border border-[#006a4e]/15 bg-white p-5 shadow-sm sm:p-6 lg:sticky lg:top-20 lg:self-start">
             <div className="mb-6 flex items-center gap-3">
               <GovtMonogram className="h-12 w-12" />
               <div>

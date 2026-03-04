@@ -9,29 +9,36 @@ import { Button } from "@/components/ui/button";
 export function LandingHeader() {
   return (
     <header className="safe-top sticky top-0 z-50 border-b border-[#006a4e]/15 bg-white/95 backdrop-blur-md">
-      <div className="govt-top-band">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-1.5 text-[11px] font-semibold text-white sm:px-8">
-          <span>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</span>
-          <span className="hidden sm:inline">
+      <div className="govt-top-band" aria-label="Government identity strip">
+        <div className="govt-top-band__segment govt-top-band__segment--left">
+          <span className="govt-top-band__meta">National Education Service</span>
+        </div>
+        <div className="govt-top-band__segment govt-top-band__segment--center">
+          <span className="govt-top-band__title">
+            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার
+          </span>
+        </div>
+        <div className="govt-top-band__segment govt-top-band__segment--right">
+          <span className="govt-top-band__meta">
             Ministry of Primary and Mass Education
           </span>
         </div>
       </div>
-      <div className="mx-auto flex min-h-20 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-8">
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:min-h-20 sm:flex-nowrap sm:justify-between sm:gap-4 sm:px-8">
         <Link
           href="/"
-          className="group flex items-center gap-3"
+          className="group flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3"
           aria-label="প্রাথমিক শিক্ষা ব্যবস্থাপনা সিস্টেম হোমপেজ"
         >
           <GovtMonogram className="h-12 w-12 shrink-0 group-hover:scale-[1.02] transition-transform" />
           <div className="min-w-0">
-            <p className="truncate text-[11px] font-semibold uppercase tracking-wider text-[#006a4e]">
+            <p className="truncate text-[10px] font-semibold uppercase tracking-wider text-[#006a4e] sm:text-[11px]">
               Primary Education Ministry
             </p>
-            <p className="truncate text-sm font-bold text-slate-900 sm:text-base">
+            <p className="truncate text-[13px] font-bold text-slate-900 sm:text-base">
               প্রাথমিক শিক্ষা ডিজিটাল ব্যবস্থাপনা প্ল্যাটফর্ম
             </p>
-            <p className="truncate text-[11px] text-slate-600">
+            <p className="hidden truncate text-[11px] text-slate-600 sm:block">
               সরকারি প্রাথমিক বিদ্যালয় প্রশাসন (শ্রেণি ১-৫)
             </p>
           </div>
@@ -57,7 +64,7 @@ export function LandingHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <div className="hidden xs:block">
             <LanguageToggle />
           </div>
