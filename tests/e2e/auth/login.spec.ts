@@ -34,6 +34,20 @@ test.describe("Authentication Flows", () => {
     await expect(page.getByText("Overview")).toBeVisible();
   });
 
+  test("logout uses local login redirect and avoids external host", async ({
+    page,
+  }) => {
+    await loginAsAdmin(page);
+
+    const logoutButton = page.getByTestId("topbar-logout-button");
+    await expect(logoutButton).toBeVisible();
+    await logoutButton.click();
+
+    await page.waitForURL("**/auth/login", { timeout: 60000 });
+    await expect(page).toHaveURL(/\/auth\/login$/);
+    expect(page.url()).not.toContain("www.dhadash-gps.vercel.app");
+  });
+
   test("register page renders current fields", async ({ page }) => {
     await page.goto("/auth/register", { waitUntil: "domcontentloaded" });
 

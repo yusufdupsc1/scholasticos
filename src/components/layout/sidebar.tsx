@@ -4,7 +4,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 import {
   LayoutDashboard,
@@ -30,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useGovtPrimaryT, useT } from "@/lib/i18n/client";
 import { isGovtPrimaryModeEnabled } from "@/lib/config";
+import { logoutAction } from "@/server/actions/session";
 
 interface SidebarProps {
   session: Session;
@@ -556,14 +556,15 @@ export function Sidebar({ session, isMobile }: SidebarProps) {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => signOut({ callbackUrl: "/auth/login" })}
-              className="bd-hover-mix mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 px-3 py-2 text-[12px] font-bold tracking-wide text-muted-foreground transition-premium hover:border-primary/35 hover:text-foreground"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>লগআউট</span>
-            </button>
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="bd-hover-mix mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 px-3 py-2 text-[12px] font-bold tracking-wide text-muted-foreground transition-premium hover:border-primary/35 hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>লগআউট</span>
+              </button>
+            </form>
           </div>
         </div>
     </aside>
