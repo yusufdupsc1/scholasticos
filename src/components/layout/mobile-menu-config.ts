@@ -172,6 +172,12 @@ const NAV_SECTIONS: MobileMenuSectionConfig[] = [
     title: "System",
     items: [
       {
+        href: "/dashboard/owner",
+        label: "Owner Control",
+        icon: "shield-check",
+        roles: ["SUPER_ADMIN"],
+      },
+      {
         href: "/dashboard/control/inactive",
         label: "Inactive Records",
         icon: "archive",
@@ -254,6 +260,7 @@ const itemLabelMap: Record<string, string> = {
   Classes: "classes",
   Announcements: "notice",
   "Notice Board": "notice_board",
+  "Owner Control": "owner_control",
   Timetable: "routine",
   "Primary Exams": "primary_exams",
 };

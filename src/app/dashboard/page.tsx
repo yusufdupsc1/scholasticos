@@ -285,6 +285,9 @@ export default async function DashboardPage() {
   if (user.role && ["TEACHER", "STUDENT", "PARENT"].includes(user.role)) {
     redirect(getDefaultDashboardPath(user.role));
   }
+  if (user.role === "SUPER_ADMIN") {
+    redirect("/dashboard/owner");
+  }
 
   const institutionId = user.institutionId;
   const institutionName = user.institutionName ?? (isBangla ? "আপনার প্রতিষ্ঠান" : "your institution");

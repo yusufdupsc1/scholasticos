@@ -8,6 +8,7 @@ export type AppRole =
   | "PARENT";
 
 export function getDefaultDashboardPath(role?: string | null): string {
+  if (role === "SUPER_ADMIN") return "/dashboard/owner";
   if (role === "STUDENT") return "/dashboard/portal/student";
   if (role === "PARENT") return "/dashboard/portal/parent";
   if (role === "TEACHER") return "/dashboard/portal/teacher";

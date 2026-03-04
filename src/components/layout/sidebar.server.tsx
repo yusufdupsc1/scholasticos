@@ -165,6 +165,12 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
         roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL"],
         children: [
           {
+            label: "Owner Control",
+            href: "/dashboard/owner",
+            roles: ["SUPER_ADMIN"],
+            exact: true,
+          },
+          {
             label: "Inactive Records",
             href: "/dashboard/control/inactive",
             roles: ["SUPER_ADMIN", "ADMIN", "PRINCIPAL"],
@@ -251,6 +257,7 @@ const itemLabelMap: Record<string, string> = {
   Events: "routine",
   Grades: "result",
   Governance: "governance",
+  "Owner Control": "owner_control",
   Institution: "school_name",
   Classes: "classes",
   Subjects: "subjects",

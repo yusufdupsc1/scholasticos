@@ -8,6 +8,7 @@ import { LandingFooter } from "@/components/landing/landing-footer";
 import { LandingHeader } from "@/components/landing/landing-header";
 import { PricingPlans } from "@/components/landing/pricing-plans";
 import { RoleModules } from "@/components/landing/role-modules";
+import { SuperAdminAccess } from "@/components/landing/super-admin-access";
 import { Testimonials } from "@/components/landing/testimonials";
 import { TrustStrip } from "@/components/landing/trust-strip";
 
@@ -30,6 +31,7 @@ export default function HomePage() {
       <LandingHeader />
       <main>
         <Hero />
+        <SuperAdminAccess />
         <DemoBookingForm />
         <TrustStrip />
         <RoleModules />

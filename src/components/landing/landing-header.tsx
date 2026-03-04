@@ -68,6 +68,13 @@ export function LandingHeader() {
           >
             লগইন
           </Link>
+          <Link
+            href="/#owner-signin"
+            prefetch={false}
+            className="hidden rounded-md border border-[#da291c]/30 px-3 py-2 text-sm font-semibold text-[#a1271c] transition-colors hover:border-[#da291c]/45 hover:bg-[#fff4f4] lg:inline-flex"
+          >
+            Owner Sign-In
+          </Link>
           <Button
             asChild
             className="primary-cta h-10 rounded-md px-4 text-sm font-bold sm:px-5"

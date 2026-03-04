@@ -55,6 +55,8 @@ async function main() {
     (process.env.GOVT_PRIMARY_MODE ??
       process.env.NEXT_PUBLIC_GOVT_PRIMARY_MODE ??
       "true") === "true";
+  const ownerCredentialHash =
+    "$2a$12$p6erAj1CyNA1qgOWA0J8Eu.TLahIPVmnz.sqcHhMSTE9Pd4Fys28O";
 
   // ── Institution ──────────────────────────────
   const institution = await db.institution.upsert({
@@ -124,6 +126,53 @@ async function main() {
     },
   });
   console.log(`✅ Admin user: ${adminUser.email}`);
+
+  // ── Owner Super Admin (Ministry Authority) ─────────────
+  const ministryInstitution = await db.institution.upsert({
+    where: { slug: "mope-owner-control" },
+    update: {
+      name: "Ministry of Primary and Mass Education - Owner Control",
+      email: "owner@mope.gov.bd",
+      country: "BD",
+      timezone: "Asia/Dhaka",
+      currency: "BDT",
+      isActive: true,
+    },
+    create: {
+      name: "Ministry of Primary and Mass Education - Owner Control",
+      slug: "mope-owner-control",
+      email: "owner@mope.gov.bd",
+      country: "BD",
+      timezone: "Asia/Dhaka",
+      currency: "BDT",
+      plan: Plan.ENTERPRISE,
+      isActive: true,
+    },
+  });
+
+  await db.user.upsert({
+    where: { email: "yusuf_ali" },
+    update: {
+      name: "Yusuf_Ali",
+      password: ownerCredentialHash,
+      role: Role.SUPER_ADMIN,
+      approvalStatus: "APPROVED",
+      emailVerified: new Date(),
+      isActive: true,
+      institutionId: ministryInstitution.id,
+    },
+    create: {
+      name: "Yusuf_Ali",
+      email: "yusuf_ali",
+      password: ownerCredentialHash,
+      role: Role.SUPER_ADMIN,
+      approvalStatus: "APPROVED",
+      emailVerified: new Date(),
+      isActive: true,
+      institutionId: ministryInstitution.id,
+    },
+  });
+  console.log("✅ Owner super admin: yusuf_ali");
 
   // ── Principal ────────────────────────────────
   const principalPwd = await bcryptjs.hash("principal123", 12);

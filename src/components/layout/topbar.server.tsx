@@ -23,7 +23,9 @@ export async function TopBarServer({ session }: { session: Session }) {
   const tg = (key: string) => dict.govtPrimary[key] || dict.common[key] || key;
 
   const topLabel = govtPrimaryMode
-    ? role === "PRINCIPAL"
+    ? role === "SUPER_ADMIN"
+      ? "Owner Command Center"
+      : role === "PRINCIPAL"
       ? tg("head_teacher")
       : role === "TEACHER"
         ? tg("assistant_teacher")

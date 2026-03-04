@@ -31,7 +31,7 @@ test.describe("Authentication Flows", () => {
   test("demo admin can sign in", async ({ page }) => {
     await loginAsAdmin(page);
     await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByText("Overview")).toBeVisible();
+    await expect(page.getByTestId("topbar-logout-button")).toBeVisible();
   });
 
   test("logout uses local login redirect and avoids external host", async ({

@@ -29,4 +29,16 @@ test.describe("Landing page", () => {
       page.getByRole("heading", { name: /বাস্তবায়ন ও সহায়তা পরিকল্পনা/i }),
     ).toBeVisible();
   });
+
+  test("renders owner super admin sign-in panel", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+
+    await expect(
+      page.getByRole("heading", {
+        name: /সুপার অ্যাডমিন সাইন-ইন/i,
+      }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Owner username")).toHaveValue("Yusuf_Ali");
+    await expect(page.getByLabel("Owner password")).toBeVisible();
+  });
 });

@@ -32,6 +32,8 @@ const ADMIN_ROUTES = [
   "/dashboard/control",
 ];
 
+const SUPER_ADMIN_ROUTES = ["/dashboard/owner"];
+
 const AUTH_SECRETS = [
   process.env.AUTH_SECRET,
   process.env.NEXTAUTH_SECRET,
@@ -218,8 +220,23 @@ export default async function middleware(req: NextRequest) {
 
   // 4. RBAC Check
   const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+  const isSuperAdminRoute = SUPER_ADMIN_ROUTES.some((route) =>
+    pathname.startsWith(route),
+  );
   const userRole = token.role as string;
   const isAdmin = isPrivilegedRole(userRole);
+
+  if (isSuperAdminRoute && userRole !== "SUPER_ADMIN") {
+    return withLocaleCookie(
+      NextResponse.redirect(
+        new URL(
+          withLocalePrefix("/dashboard", locale, hasLocalePrefix),
+          req.url,
+        ),
+      ),
+      locale,
+    );
+  }
 
   if (isAdminRoute && !isAdmin) {
     return withLocaleCookie(
