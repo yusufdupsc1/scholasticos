@@ -60,6 +60,21 @@ export default async function LoginPage({
               পরিচালিত।
             </p>
 
+            <div className="mt-4 flex flex-wrap gap-2">
+              {[
+                "Ministry Controlled",
+                "Password + OTP Login",
+                "Audit-ready Access",
+              ].map((chip) => (
+                <span
+                  key={chip}
+                  className="rounded-full border border-[#006a4e]/20 bg-[#f3faf7] px-2.5 py-1 text-[11px] font-semibold text-[#006a4e]"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {[
                 {
@@ -155,6 +170,10 @@ export default async function LoginPage({
               >
                 Privacy Policy
               </Link>
+            </p>
+
+            <p className="mt-3 text-center text-[11px] text-slate-500">
+              Operational authority remains under Ministry governance.
             </p>
           </section>
         </div>

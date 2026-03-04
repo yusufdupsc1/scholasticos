@@ -9,7 +9,16 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Eye, EyeOff, Loader2, AlertCircle, Smartphone } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  AlertCircle,
+  Smartphone,
+  ShieldCheck,
+  ClipboardPaste,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -127,6 +136,35 @@ const AUTH_ERRORS: Record<string, string> = {
   default: "An unexpected error occurred. Please try again.",
 };
 
+const LOGIN_PREFS_KEY = "dhadash.auth.login-prefs";
+const OTP_COOLDOWN_SECONDS = 30;
+
+function normalizeInstitutionSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function normalizePhone(value: string): string {
+  const raw = value.trim();
+  const onlyDigits = raw.replace(/[^\d]/g, "");
+
+  if (onlyDigits.startsWith("8801")) {
+    return `+${onlyDigits}`;
+  }
+  if (onlyDigits.startsWith("01")) {
+    return `+88${onlyDigits}`;
+  }
+  if (raw.startsWith("+")) {
+    return `+${onlyDigits}`;
+  }
+  return onlyDigits;
+}
+
 export function LoginForm({
   callbackUrl,
   error,
@@ -136,6 +174,8 @@ export function LoginForm({
   const [isPending, startTransition] = useTransition();
   const [isSendingOtp, startOtpTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+  const [otpCooldown, setOtpCooldown] = useState(0);
   const [scopeCounts, setScopeCounts] = useState<Record<string, number> | null>(
     null,
   );
@@ -167,8 +207,54 @@ export function LoginForm({
 
   const selectedScope = useWatch({ control, name: "scope" });
   const selectedMode = useWatch({ control, name: "loginMode" });
-  const institutionSlug =
-    useWatch({ control, name: "institution" })?.trim().toLowerCase() ?? "";
+  const watchedInstitution = useWatch({ control, name: "institution" }) ?? "";
+  const institutionSlug = normalizeInstitutionSlug(watchedInstitution);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(LOGIN_PREFS_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Partial<LoginFormValues>;
+      if (parsed.institution) {
+        setValue("institution", normalizeInstitutionSlug(parsed.institution));
+      }
+      if (
+        parsed.scope &&
+        ["ADMIN", "TEACHER", "STUDENT", "PARENT"].includes(parsed.scope)
+      ) {
+        setValue("scope", parsed.scope);
+      }
+      if (
+        parsed.loginMode &&
+        ["PASSWORD", "PHONE_OTP"].includes(parsed.loginMode)
+      ) {
+        setValue("loginMode", parsed.loginMode);
+      }
+    } catch {
+      // Ignore malformed local preference payloads.
+    }
+  }, [setValue]);
+
+  useEffect(() => {
+    const prefs = {
+      institution: institutionSlug,
+      scope: selectedScope,
+      loginMode: selectedMode,
+    };
+    try {
+      window.localStorage.setItem(LOGIN_PREFS_KEY, JSON.stringify(prefs));
+    } catch {
+      // Ignore blocked localStorage.
+    }
+  }, [institutionSlug, selectedScope, selectedMode]);
+
+  useEffect(() => {
+    if (otpCooldown <= 0) return;
+    const timer = window.setInterval(() => {
+      setOtpCooldown((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [otpCooldown]);
 
   useEffect(() => {
     if (!institutionSlug) {
@@ -249,10 +335,16 @@ export function LoginForm({
 
   const handleSendOtp = () => {
     setFormError(null);
+    if (otpCooldown > 0) return;
+
     const currentScope = getValues("scope");
-    const currentInstitution =
-      getValues("institution")?.trim().toLowerCase() ?? "";
-    const currentPhone = getValues("phone")?.trim() ?? "";
+    const currentInstitution = normalizeInstitutionSlug(
+      getValues("institution") ?? "",
+    );
+    const currentPhone = normalizePhone(getValues("phone") ?? "");
+
+    setValue("institution", currentInstitution);
+    setValue("phone", currentPhone);
 
     if (currentScope !== "ADMIN" && !currentInstitution) {
       setFormError("Institution slug is required for this scope.");
@@ -289,6 +381,7 @@ export function LoginForm({
         }
 
         setValue("otpChallengeId", challengeId, { shouldValidate: true });
+        setOtpCooldown(OTP_COOLDOWN_SECONDS);
         toast.success("OTP sent to your phone.");
 
         if (json?.meta?.devOtp) {
@@ -300,8 +393,40 @@ export function LoginForm({
     });
   };
 
+  const handlePasteOtp = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const code = text.replace(/[^\d]/g, "").slice(0, 6);
+      if (!code) {
+        toast.error("Clipboard does not contain a valid OTP.");
+        return;
+      }
+      setValue("otpCode", code, { shouldValidate: true });
+      toast.success("OTP pasted.");
+    } catch {
+      toast.error("Clipboard permission not available.");
+    }
+  };
+
+  const applyDemoCredentials = (email: string, password: string) => {
+    setValue("scope", "ADMIN", { shouldValidate: true });
+    setValue("loginMode", "PASSWORD", { shouldValidate: true });
+    setValue("institution", "", { shouldValidate: true });
+    setValue("email", email, { shouldValidate: true });
+    setValue("password", password, { shouldValidate: true });
+    setFormError(null);
+    toast.success("Demo credentials applied.");
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
+      <div className="rounded-xl border border-[#006a4e]/15 bg-[#f6fbf9] p-3">
+        <p className="flex items-center gap-2 text-xs font-semibold text-[#006a4e]">
+          <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+          Ministry-governed secure access
+        </p>
+      </div>
+
       {formError && (
         <Alert
           variant="destructive"
@@ -324,9 +449,9 @@ export function LoginForm({
                   setValue("scope", scope.value, { shouldValidate: true })
                 }
                 className={cn(
-                  "rounded-lg border px-3 py-2 text-left transition-colors",
+                  "rounded-lg border px-3 py-2 text-left transition-all",
                   selectedScope === scope.value
-                    ? "border-primary bg-primary/10"
+                    ? "border-[#006a4e]/40 bg-[#006a4e]/8 shadow-sm"
                     : "border-border bg-background hover:bg-muted/50",
                 )}
                 disabled={isPending || isSendingOtp}
@@ -354,9 +479,9 @@ export function LoginForm({
                 setValue("loginMode", "PASSWORD", { shouldValidate: true })
               }
               className={cn(
-                "rounded-lg border px-3 py-2 text-left text-sm transition-colors",
+                "rounded-lg border px-3 py-2 text-left text-sm transition-all",
                 selectedMode === "PASSWORD"
-                  ? "border-primary bg-primary/10"
+                  ? "border-[#006a4e]/40 bg-[#006a4e]/8 shadow-sm"
                   : "border-border bg-background hover:bg-muted/50",
               )}
               disabled={isPending || isSendingOtp}
@@ -369,9 +494,9 @@ export function LoginForm({
                 setValue("loginMode", "PHONE_OTP", { shouldValidate: true })
               }
               className={cn(
-                "rounded-lg border px-3 py-2 text-left text-sm transition-colors",
+                "rounded-lg border px-3 py-2 text-left text-sm transition-all",
                 selectedMode === "PHONE_OTP"
-                  ? "border-primary bg-primary/10"
+                  ? "border-[#006a4e]/40 bg-[#006a4e]/8 shadow-sm"
                   : "border-border bg-background hover:bg-muted/50",
               )}
               disabled={isPending || isSendingOtp}
@@ -391,6 +516,10 @@ export function LoginForm({
             autoComplete="organization"
             placeholder="e.g. greenfield-school"
             disabled={isPending || isSendingOtp}
+            onBlur={(e) => {
+              const normalized = normalizeInstitutionSlug(e.target.value);
+              setValue("institution", normalized, { shouldValidate: true });
+            }}
             {...register("institution")}
           />
           {scopeInfoError && institutionSlug ? (
@@ -441,6 +570,10 @@ export function LoginForm({
                   autoComplete="current-password"
                   placeholder="••••••••"
                   disabled={isPending || isSendingOtp}
+                  onKeyUp={(event) => {
+                    setIsCapsLockOn(event.getModifierState("CapsLock"));
+                  }}
+                  onBlur={() => setIsCapsLockOn(false)}
                   className={`pr-10 ${errors.password ? "border-destructive" : ""}`}
                   {...register("password")}
                 />
@@ -457,6 +590,11 @@ export function LoginForm({
                   )}
                 </button>
               </div>
+              {isCapsLockOn ? (
+                <p className="text-xs text-amber-600">
+                  Caps Lock is on. Check your password before signing in.
+                </p>
+              ) : null}
               {errors.password && (
                 <p className="text-xs text-destructive">
                   {errors.password.message}
@@ -475,6 +613,10 @@ export function LoginForm({
                   autoComplete="tel"
                   placeholder="+8801XXXXXXXXX"
                   disabled={isPending || isSendingOtp}
+                  onBlur={(e) => {
+                    const normalized = normalizePhone(e.target.value);
+                    setValue("phone", normalized, { shouldValidate: true });
+                  }}
                   className={errors.phone ? "border-destructive" : ""}
                   {...register("phone")}
                 />
@@ -482,14 +624,14 @@ export function LoginForm({
                   type="button"
                   variant="outline"
                   onClick={handleSendOtp}
-                  disabled={isPending || isSendingOtp}
+                  disabled={isPending || isSendingOtp || otpCooldown > 0}
                 >
                   {isSendingOtp ? (
                     <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                   ) : (
                     <Smartphone className="mr-1 h-4 w-4" />
                   )}
-                  Send OTP
+                  {otpCooldown > 0 ? `Resend ${otpCooldown}s` : "Send OTP"}
                 </Button>
               </div>
               {errors.phone && (
@@ -500,7 +642,18 @@ export function LoginForm({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="otpCode">OTP Code</Label>
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="otpCode">OTP Code</Label>
+                <button
+                  type="button"
+                  onClick={handlePasteOtp}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#006a4e] underline-offset-4 hover:underline disabled:opacity-50"
+                  disabled={isPending || isSendingOtp}
+                >
+                  <ClipboardPaste className="h-3.5 w-3.5" aria-hidden="true" />
+                  Paste OTP
+                </button>
+              </div>
               <Input
                 id="otpCode"
                 type="text"
@@ -522,7 +675,7 @@ export function LoginForm({
 
         <Button
           type="submit"
-          className="w-full"
+          className="primary-cta w-full"
           disabled={isPending || isSendingOtp}
         >
           {isPending ? (
@@ -534,6 +687,35 @@ export function LoginForm({
             "Sign in"
           )}
         </Button>
+
+        <div className="rounded-xl border border-[#006a4e]/15 bg-[#f7fbf9] p-3">
+          <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-[#006a4e]">
+            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+            Smart utilities
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                applyDemoCredentials("admin@school.edu", "admin123")
+              }
+              className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
+              disabled={isPending || isSendingOtp}
+            >
+              Use demo admin
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                applyDemoCredentials("principal@school.edu", "principal123")
+              }
+              className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
+              disabled={isPending || isSendingOtp}
+            >
+              Use demo principal
+            </button>
+          </div>
+        </div>
       </form>
 
       <div className="relative">
@@ -582,24 +764,24 @@ export function LoginForm({
         </p>
       )}
 
-      <div className="rounded-xl border border-dashed border-primary/20 bg-primary/5 p-4 shadow-sm">
-        <p className="text-xs font-semibold text-primary mb-2 flex items-center gap-1.5">
+      <div className="rounded-xl border border-dashed border-[#006a4e]/35 bg-[#f3faf7] p-4 shadow-sm">
+        <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-[#006a4e]">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#006a4e] opacity-75"></span>
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#006a4e]"></span>
           </span>
           Demo Access
         </p>
         <div className="space-y-1 font-mono text-sm text-foreground/80">
           <div className="flex justify-between items-center group">
-            <span>admin@school.edu</span>
-            <span className="text-muted-foreground group-hover:text-primary transition-colors text-xs">
+              <span>admin@school.edu</span>
+            <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
               admin123
             </span>
           </div>
           <div className="flex justify-between items-center group">
             <span>principal@school.edu</span>
-            <span className="text-muted-foreground group-hover:text-primary transition-colors text-xs">
+            <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
               principal123
             </span>
           </div>
