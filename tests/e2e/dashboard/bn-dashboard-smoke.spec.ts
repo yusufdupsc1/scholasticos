@@ -7,7 +7,7 @@ test.describe("BN dashboard smoke", () => {
   }) => {
     await loginAsAdmin(page);
 
-    await page.goto("/bn/dashboard", { waitUntil: "domcontentloaded" });
+    await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
 
     await expect(page).toHaveURL(/\/bn\/dashboard|\/dashboard/);
     await expect(page.locator("#dashboard-main")).toBeVisible();

@@ -7,7 +7,8 @@ const ADMIN_SCHOOL_CODE = process.env.E2E_ADMIN_SCHOOL_CODE || "bd-gps";
 export async function loginAsAdmin(page: Page) {
   await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
 
-  await page.getByLabel("School Code (optional for Admin)").fill(ADMIN_SCHOOL_CODE);
+  const schoolCodeInput = page.getByLabel("School Code");
+  await schoolCodeInput.fill(ADMIN_SCHOOL_CODE);
 
   await page.getByLabel("Email address").fill(ADMIN_EMAIL);
   await page.getByLabel("Password").fill(ADMIN_PASSWORD);
