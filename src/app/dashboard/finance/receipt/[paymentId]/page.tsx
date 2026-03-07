@@ -18,7 +18,7 @@ export default async function ReceiptPrintPage({ params }: PageProps) {
   const institutionId = currentUser?.institutionId;
 
   if (!institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   const payment = await db.payment.findFirst({

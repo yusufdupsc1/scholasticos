@@ -1,11 +1,11 @@
+import { normalizeScope, roleWhereForScope } from "@/lib/auth-scope";
+import { db } from "@/lib/db";
+import { normalizeEmail, normalizePhone } from "@/lib/identity";
+import { verifyOtpChallenge } from "@/server/services/otp";
+import * as bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import * as bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
-import { normalizeEmail, normalizePhone } from "@/lib/identity";
-import { normalizeScope, roleWhereForScope } from "@/lib/auth-scope";
-import { verifyOtpChallenge } from "@/server/services/otp";
 
 const AUTH_SECRETS = [
   process.env.AUTH_SECRET,
@@ -15,8 +15,8 @@ const AUTH_SECRETS = [
 const ALLOW_DEMO_LOGIN = process.env.ALLOW_DEMO_LOGIN === "true";
 
 const DEMO_INSTITUTION = {
-  slug: "dhadash-demo",
-  name: "Dhadash Academy",
+  slug: "bd-gps",
+  name: "BD-GPS Govt Primary Demo School",
   email: "admin@school.edu",
   city: "Dhaka",
   country: "BD",
@@ -26,9 +26,15 @@ const DEMO_INSTITUTION = {
 
 const DEMO_USERS = [
   {
+    email: "superadmin@school.edu",
+    password: "superadmin123",
+    name: "Demo Super Admin",
+    role: "SUPER_ADMIN",
+  },
+  {
     email: "admin@school.edu",
     password: "admin123",
-    name: "Alex Admin",
+    name: "Admin",
     role: "ADMIN",
   },
   {
@@ -352,8 +358,8 @@ async function upsertGoogleUserContext(user: {
 const providers: any[] = [
   Credentials({
     name: "Credentials",
-    credentials: {
-      institution: { label: "Institution", type: "text" },
+      credentials: {
+        institution: { label: "Institution", type: "text" },
       scope: { label: "Scope", type: "text" },
       loginMode: { label: "Login Mode", type: "text" },
       email: { label: "Email", type: "email" },
@@ -386,7 +392,7 @@ const providers: any[] = [
           : "PASSWORD";
       const userRoleFilter = roleWhereForScope(normalizedScope);
 
-      if (normalizedScope !== "ADMIN" && !normalizedInstitution) {
+      if (!normalizedInstitution) {
         return null;
       }
 
@@ -482,11 +488,9 @@ const providers: any[] = [
           role: userRoleFilter,
           isActive: true,
           approvalStatus: "APPROVED",
-          ...(normalizedInstitution && {
-            institution: {
-              slug: { equals: normalizedInstitution, mode: "insensitive" },
-            },
-          }),
+          institution: {
+            slug: { equals: normalizedInstitution, mode: "insensitive" },
+          },
         },
         include: { institution: { select: { name: true, slug: true } } },
       });
@@ -494,25 +498,6 @@ const providers: any[] = [
       if (user?.password && user.institution?.slug) {
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) {
-          if (normalizedScope === "ADMIN" && !normalizedInstitution) {
-            const ownerUser = await provisionOwnerSuperAdminIfNeeded(
-              normalizedIdentifier,
-              password,
-            );
-            if (ownerUser?.password && ownerUser.institution?.slug) {
-              return {
-                id: ownerUser.id,
-                name: ownerUser.name,
-                email: ownerUser.email,
-                image: ownerUser.image,
-                role: ownerUser.role,
-                institutionId: ownerUser.institutionId,
-                institutionName: ownerUser.institution.name,
-                institutionSlug: ownerUser.institution.slug,
-                phone: ownerUser.phone,
-              };
-            }
-          }
           return null;
         }
 
@@ -529,32 +514,34 @@ const providers: any[] = [
         };
       }
 
-      if (
-        normalizedInstitution &&
-        normalizedInstitution !== DEMO_INSTITUTION.slug
-      ) {
-        return null;
-      }
       if (normalizedScope !== "ADMIN") {
         return null;
       }
 
-      const ownerUser = await provisionOwnerSuperAdminIfNeeded(
-        normalizedIdentifier,
-        password,
-      );
-      if (ownerUser?.password && ownerUser.institution?.slug) {
-        return {
-          id: ownerUser.id,
-          name: ownerUser.name,
-          email: ownerUser.email,
-          image: ownerUser.image,
-          role: ownerUser.role,
-          institutionId: ownerUser.institutionId,
-          institutionName: ownerUser.institution.name,
-          institutionSlug: ownerUser.institution.slug,
-          phone: ownerUser.phone,
-        };
+      if (normalizedInstitution === OWNER_CONTROL_INSTITUTION.slug) {
+        const ownerUser = await provisionOwnerSuperAdminIfNeeded(
+          normalizedIdentifier,
+          password,
+        );
+        if (ownerUser?.password && ownerUser.institution?.slug) {
+          return {
+            id: ownerUser.id,
+            name: ownerUser.name,
+            email: ownerUser.email,
+            image: ownerUser.image,
+            role: ownerUser.role,
+            institutionId: ownerUser.institutionId,
+            institutionName: ownerUser.institution.name,
+            institutionSlug: ownerUser.institution.slug,
+            phone: ownerUser.phone,
+          };
+        }
+
+        return null;
+      }
+
+      if (normalizedInstitution !== DEMO_INSTITUTION.slug) {
+        return null;
       }
 
       user = await provisionDemoUserIfNeeded(normalizedIdentifier, password);
@@ -587,7 +574,7 @@ if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
 const authConfig: any = {
   secret: AUTH_SECRETS.length > 1 ? AUTH_SECRETS : AUTH_SECRETS[0],
   session: { strategy: "jwt" },
-  pages: { signIn: "/auth/login" },
+  pages: { signIn: "/auth/login/admin" },
   providers,
   callbacks: {
     async signIn({ user, account }) {

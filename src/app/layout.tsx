@@ -31,24 +31,24 @@ const hindSiliguri = Hind_Siliguri({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://app.dhadash.com",
+    process.env.NEXT_PUBLIC_APP_URL || "https://app.bd-gps.com",
   ),
   manifest: "/manifest.webmanifest",
   title: {
-    default: "Dhadash — Govt. Primary School Operations",
-    template: "%s | Dhadash",
+    default: "BD-GPS — Govt. Primary School Operations",
+    template: "%s | BD-GPS",
   },
   description:
     "সরকারি প্রাথমিক বিদ্যালয় (১ম–৫ম শ্রেণি) এর জন্য attendance, fee ও office workflow platform.",
   keywords: [
     "govt primary school software",
     "bangladesh school management",
-    "dhadash",
+    "bd-gps",
     "attendance register print",
     "fee receipt print",
   ],
-  authors: [{ name: "Dhadash" }],
-  creator: "Dhadash",
+  authors: [{ name: "BD-GPS" }],
+  creator: "BD-GPS",
   icons: {
     icon: [
       { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
@@ -61,19 +61,19 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Dhadash",
+    title: "BD-GPS",
   },
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    siteName: "Dhadash",
-    title: "Dhadash — সরকারি প্রাথমিক বিদ্যালয়ের ডিজিটাল অফিস সিস্টেম",
+    siteName: "BD-GPS",
+    title: "BD-GPS — সরকারি প্রাথমিক বিদ্যালয়ের ডিজিটাল অফিস সিস্টেম",
     description:
       "Attendance register, fee receipt ও নোটিশ workflow এক প্ল্যাটফর্মে।",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dhadash",
+    title: "BD-GPS",
     description:
       "Govt. Primary schools (Class 1–5) এর জন্য Bangladesh-first platform.",
   },

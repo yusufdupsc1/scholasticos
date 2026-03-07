@@ -51,11 +51,11 @@
 ### Step 1: Environment Setup
 
 ```bash
-cd /home/neo/Videos/dhadash
+cd /home/neo/Videos/bd-gps
 
 # Ensure .env.local has these variables:
 cat > .env.local << 'EOF'
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dhadash"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/bd-gps"
 REDIS_URL="redis://localhost:6379"
 AUTH_SECRET="dev-secret-32-characters-minimum"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
@@ -152,7 +152,7 @@ pnpm run dev
 ```bash
 # In database client (psql or GUI):
 
-psql -U postgres -d dhadash
+psql -U postgres -d bd-gps
 
 # View export logs:
 SELECT
@@ -316,7 +316,7 @@ done
 
 ```bash
 # Check database
-psql -U postgres -d dhadash -c "
+psql -U postgres -d bd-gps -c "
   SELECT
     user_id,
     export_type,
@@ -333,7 +333,7 @@ psql -U postgres -d dhadash -c "
 
 ```bash
 # Check tokens table
-psql -U postgres -d dhadash -c "
+psql -U postgres -d bd-gps -c "
   SELECT
     file_id,
     export_type,

@@ -30,7 +30,7 @@ export function LandingFooter() {
               {[
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms of Service", href: "/terms" },
-                { label: "Admin Login", href: "/auth/login" },
+                { label: "Admin Login", href: "/auth/login/admin" },
                 { label: "Demo Booking", href: "/#demo-booking" },
               ].map((link) => (
               <Link
@@ -49,7 +49,7 @@ export function LandingFooter() {
             <p className="mb-3 text-sm font-bold text-slate-900">যোগাযোগ</p>
             <ul className="space-y-2 text-sm text-slate-700">
               <li>Implementation Desk: +880 1700-000000</li>
-              <li>Email: support@dhadash.com</li>
+              <li>Email: support@bd-gps.com</li>
               <li>ঢাকা, বাংলাদেশ</li>
             </ul>
           </div>
@@ -57,7 +57,7 @@ export function LandingFooter() {
 
         <div className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-[#006a4e]/10 pt-6 sm:flex-row sm:items-center">
           <p className="text-xs font-medium text-slate-600">
-            © {new Date().getFullYear()} Dhadash. All rights reserved.
+            © {new Date().getFullYear()} BD-GPS. All rights reserved.
           </p>
           <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-[#006a4e]">
             <span className="inline-block h-2 w-2 rounded-full bg-[#da291c]" />

@@ -1,29 +1,29 @@
 // src/components/forms/login-form.tsx
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  AlertCircle,
-  Smartphone,
-  ShieldCheck,
-  ClipboardPaste,
-  Sparkles,
-} from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  AlertCircle,
+  ClipboardPaste,
+  Eye,
+  EyeOff,
+  Loader2,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+} from "lucide-react";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const SCOPE_OPTIONS = [
   {
@@ -60,11 +60,10 @@ const LoginSchema = z
     otpChallengeId: z.string().optional(),
   })
   .superRefine((value, ctx) => {
-    if (value.scope !== "ADMIN" && !value.institution?.trim()) {
+    if (!value.institution?.trim()) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message:
-          "School code is required for teacher/student/parent login scope.",
+        message: "School code is required for tenant login.",
         path: ["institution"],
       });
     }
@@ -138,6 +137,8 @@ interface LoginFormProps {
   callbackUrl?: string;
   error?: string;
   googleEnabled?: boolean;
+  lockedScope?: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT";
+  lockedInstitution?: string;
 }
 
 const AUTH_ERRORS: Record<string, string> = {
@@ -150,7 +151,7 @@ const AUTH_ERRORS: Record<string, string> = {
   default: "An unexpected error occurred. Please try again.",
 };
 
-const LOGIN_PREFS_KEY = "dhadash.auth.login-prefs";
+const LOGIN_PREFS_KEY = "bd-gps.auth.login-prefs";
 const OTP_COOLDOWN_SECONDS = 30;
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]{3,80}$/;
 
@@ -184,6 +185,8 @@ export function LoginForm({
   callbackUrl,
   error,
   googleEnabled = false,
+  lockedScope,
+  lockedInstitution,
 }: LoginFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -224,8 +227,24 @@ export function LoginForm({
   const selectedMode = useWatch({ control, name: "loginMode" });
   const watchedInstitution = useWatch({ control, name: "institution" }) ?? "";
   const institutionSlug = normalizeInstitutionSlug(watchedInstitution);
+  const scopeLocked = Boolean(lockedScope);
+
+  const dashboardByScope: Record<
+    "ADMIN" | "TEACHER" | "STUDENT" | "PARENT",
+    string
+  > = {
+    ADMIN: "/dashboard",
+    TEACHER: "/dashboard/portal/teacher",
+    STUDENT: "/dashboard/portal/student",
+    PARENT: "/dashboard/portal/parent",
+  };
 
   useEffect(() => {
+    if (lockedScope) {
+      setValue("scope", lockedScope, { shouldValidate: true });
+      return;
+    }
+
     try {
       const raw = window.localStorage.getItem(LOGIN_PREFS_KEY);
       if (!raw) return;
@@ -248,9 +267,18 @@ export function LoginForm({
     } catch {
       // Ignore malformed local preference payloads.
     }
-  }, [setValue]);
+  }, [lockedScope, setValue]);
 
   useEffect(() => {
+    if (!lockedInstitution) return;
+    setValue("institution", normalizeInstitutionSlug(lockedInstitution), {
+      shouldValidate: true,
+    });
+  }, [lockedInstitution, setValue]);
+
+  useEffect(() => {
+    if (lockedScope) return;
+
     const prefs = {
       institution: institutionSlug,
       scope: selectedScope,
@@ -261,7 +289,7 @@ export function LoginForm({
     } catch {
       // Ignore blocked localStorage.
     }
-  }, [institutionSlug, selectedScope, selectedMode]);
+  }, [institutionSlug, lockedScope, selectedScope, selectedMode]);
 
   useEffect(() => {
     if (otpCooldown <= 0) return;
@@ -310,8 +338,10 @@ export function LoginForm({
 
     startTransition(async () => {
       const result = await signIn("credentials", {
-        institution: values.institution?.trim(),
-        scope: values.scope,
+        institution: normalizeInstitutionSlug(
+          (lockedInstitution ?? values.institution ?? "").trim(),
+        ),
+        scope: lockedScope ?? values.scope,
         loginMode: values.loginMode,
         email: values.email?.trim(),
         password: values.password,
@@ -329,7 +359,8 @@ export function LoginForm({
       }
 
       toast.success("Welcome back!");
-      router.push(callbackUrl ? decodeURIComponent(callbackUrl) : "/dashboard");
+      const resolvedScope = lockedScope ?? values.scope;
+      router.push(dashboardByScope[resolvedScope] ?? "/dashboard");
       router.refresh();
     });
   };
@@ -352,17 +383,17 @@ export function LoginForm({
     setFormError(null);
     if (otpCooldown > 0) return;
 
-    const currentScope = getValues("scope");
+    const currentScope = lockedScope ?? getValues("scope");
     const currentInstitution = normalizeInstitutionSlug(
-      getValues("institution") ?? "",
+      lockedInstitution ?? getValues("institution") ?? "",
     );
     const currentPhone = normalizePhone(getValues("phone") ?? "");
 
     setValue("institution", currentInstitution);
     setValue("phone", currentPhone);
 
-    if (currentScope !== "ADMIN" && !currentInstitution) {
-      setFormError("School code is required for this scope.");
+    if (!currentInstitution) {
+      setFormError("School code is required for this login flow.");
       return;
     }
 
@@ -424,9 +455,13 @@ export function LoginForm({
   };
 
   const applyDemoCredentials = (email: string, password: string) => {
-    setValue("scope", "ADMIN", { shouldValidate: true });
+    setValue("scope", lockedScope ?? "ADMIN", { shouldValidate: true });
     setValue("loginMode", "PASSWORD", { shouldValidate: true });
-    setValue("institution", "", { shouldValidate: true });
+    setValue(
+      "institution",
+      normalizeInstitutionSlug(lockedInstitution ?? "bd-gps"),
+      { shouldValidate: true },
+    );
     setValue("email", email, { shouldValidate: true });
     setValue("password", password, { shouldValidate: true });
     setFormError(null);
@@ -469,7 +504,7 @@ export function LoginForm({
                     ? "border-[#006a4e]/40 bg-[#006a4e]/8 shadow-sm"
                     : "border-border bg-background hover:bg-muted/50",
                 )}
-                disabled={isPending || isSendingOtp}
+                disabled={isPending || isSendingOtp || scopeLocked}
               >
                 <p className="text-sm font-medium">{scope.label}</p>
                 <p className="text-[11px] text-muted-foreground">
@@ -522,15 +557,13 @@ export function LoginForm({
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="institution">
-            School Code (optional for Admin)
-          </Label>
+          <Label htmlFor="institution">School Code</Label>
           <Input
             id="institution"
             type="text"
             autoComplete="organization"
             placeholder="e.g. greenfield"
-            disabled={isPending || isSendingOtp}
+            disabled={isPending || isSendingOtp || Boolean(lockedInstitution)}
             onBlur={(e) => {
               const normalized = normalizeInstitutionSlug(e.target.value);
               setValue("institution", normalized, { shouldValidate: true });
@@ -538,7 +571,7 @@ export function LoginForm({
             {...register("institution")}
           />
           <p className="text-xs text-muted-foreground">
-            Use the school code provided during institution onboarding.
+            Use your tenant school code provided during onboarding.
           </p>
           {scopeInfoError && institutionSlug ? (
             <p className="text-xs text-muted-foreground">{scopeInfoError}</p>
@@ -716,6 +749,16 @@ export function LoginForm({
             <button
               type="button"
               onClick={() =>
+                applyDemoCredentials("superadmin@school.edu", "superadmin123")
+              }
+              className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
+              disabled={isPending || isSendingOtp}
+            >
+              Use demo superadmin
+            </button>
+            <button
+              type="button"
+              onClick={() =>
                 applyDemoCredentials("admin@school.edu", "admin123")
               }
               className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
@@ -732,6 +775,36 @@ export function LoginForm({
               disabled={isPending || isSendingOtp}
             >
               Use demo principal
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                applyDemoCredentials("teacher.demo@school.edu", "teacher123")
+              }
+              className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
+              disabled={isPending || isSendingOtp}
+            >
+              Use demo teacher
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                applyDemoCredentials("student.demo@school.edu", "student123")
+              }
+              className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
+              disabled={isPending || isSendingOtp}
+            >
+              Use demo student
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                applyDemoCredentials("parent.demo@school.edu", "parent123")
+              }
+              className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
+              disabled={isPending || isSendingOtp}
+            >
+              Use demo parent
             </button>
           </div>
         </div>
@@ -791,21 +864,45 @@ export function LoginForm({
           </span>
           Demo Access
         </p>
-        <div className="space-y-1 font-mono text-sm text-foreground/80">
-          <div className="flex justify-between items-center group">
-            <span className="max-w-[65%] truncate">admin@school.edu</span>
-            <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
+          <div className="space-y-1 font-mono text-sm text-foreground/80">
+            <div className="flex justify-between items-center group">
+              <span className="max-w-[65%] truncate">superadmin@school.edu</span>
+              <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
+                superadmin123
+              </span>
+            </div>
+            <div className="flex justify-between items-center group">
+              <span className="max-w-[65%] truncate">admin@school.edu</span>
+              <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
               admin123
             </span>
           </div>
-          <div className="flex justify-between items-center group">
-            <span className="max-w-[65%] truncate">principal@school.edu</span>
-            <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
-              principal123
-            </span>
+            <div className="flex justify-between items-center group">
+              <span className="max-w-[65%] truncate">principal@school.edu</span>
+              <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
+                principal123
+              </span>
+            </div>
+            <div className="flex justify-between items-center group">
+              <span className="max-w-[65%] truncate">teacher.demo@school.edu</span>
+              <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
+                teacher123
+              </span>
+            </div>
+            <div className="flex justify-between items-center group">
+              <span className="max-w-[65%] truncate">student.demo@school.edu</span>
+              <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
+                student123
+              </span>
+            </div>
+            <div className="flex justify-between items-center group">
+              <span className="max-w-[65%] truncate">parent.demo@school.edu</span>
+              <span className="text-xs text-muted-foreground transition-colors group-hover:text-[#006a4e]">
+                parent123
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
       <p className="text-center text-xs text-muted-foreground">
         Teacher, Student, or Parent?{" "}

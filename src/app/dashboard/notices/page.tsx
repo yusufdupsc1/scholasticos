@@ -25,7 +25,7 @@ export default async function NoticesPage({ searchParams }: PageProps) {
   )?.institutionId;
 
   if (!institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   const classes = await safeLoader(

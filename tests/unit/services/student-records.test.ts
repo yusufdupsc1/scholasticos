@@ -75,7 +75,7 @@ describe("student records generation service", () => {
     dbMock.studentRecord.findUnique.mockResolvedValue(null);
     dbMock.institution.findUnique.mockResolvedValue({
       id: "inst-1",
-      name: "Dhadash Demo",
+      name: "BD-GPS Demo",
       address: "Dhaka",
       settings: {
         signatoryName: "Md. Abdul Karim",

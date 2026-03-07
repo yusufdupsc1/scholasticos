@@ -1,10 +1,11 @@
 "use server";
 
+import { signIn } from "@/lib/auth";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
-import { signIn } from "@/lib/auth";
 
-const OWNER_LOGIN_ERROR_REDIRECT = "/auth/login?error=CredentialsSignin";
+const OWNER_LOGIN_ERROR_REDIRECT =
+  "/auth/login/owner?error=CredentialsSignin&institution=mope-owner-control";
 
 export async function ownerSignInAction(formData: FormData) {
   const username = String(formData.get("username") ?? "")
@@ -19,6 +20,7 @@ export async function ownerSignInAction(formData: FormData) {
 
   try {
     const result = await signIn("credentials", {
+      institution: "mope-owner-control",
       scope: "ADMIN",
       loginMode: "PASSWORD",
       email: username.toLowerCase(),

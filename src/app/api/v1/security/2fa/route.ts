@@ -23,7 +23,7 @@ import { createDomainEvent, publishDomainEvent } from "@/server/events/publish";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const ISSUER = "Dhadash";
+const ISSUER = "BD-GPS";
 
 export async function GET(req: NextRequest) {
   const auth = await requireApiPermission(req, "security", "read");

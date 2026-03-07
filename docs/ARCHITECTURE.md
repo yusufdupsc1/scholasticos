@@ -1,6 +1,6 @@
 # Architecture
 
-This document captures the high-level design and tradeoffs in Dhadash.
+This document captures the high-level design and tradeoffs in BD-GPS.
 
 ## 1) Core Principles
 
@@ -89,3 +89,24 @@ Natural next steps for scale:
 - Introduce distributed rate limiter/cache backend (Redis) for multi-instance consistency.
 - Add structured logging and centralized tracing.
 - Add contract tests for external integration boundaries.
+
+## 9) Recruiter-Visible Architecture Highlights
+
+- **Clear separation of concerns:** request handling in App Router/API, business workflows in server actions, persistence in Prisma.
+- **Tenant-safe authorization path:** middleware + JWT claims + scoped queries ensure institutional boundaries.
+- **Operational discipline:** documented deployment runbooks, validated envs, health checks, and CI gates.
+- **Scalable evolution path:** system is intentionally monolithic-first with explicit extension points (cache, tracing, contracts).
+
+## 10) Architecture Decision Snapshot (ADR-style)
+
+1. **Monolith with modular boundaries**
+   - Chosen for delivery speed and reduced operational complexity.
+   - Mitigation: strongly defined module boundaries in `src/server/actions` and `src/lib`.
+
+2. **JWT session strategy with Auth.js**
+   - Chosen for edge/middleware compatibility and low session-store coupling.
+   - Mitigation: role + institution claims are validated server-side before sensitive actions.
+
+3. **Prisma + PostgreSQL for tenant data isolation**
+   - Chosen for schema clarity, migration tooling, and type-safe data access.
+   - Mitigation: institution-scoped data access patterns are enforced in action/query design.

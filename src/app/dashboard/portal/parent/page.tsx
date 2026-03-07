@@ -109,7 +109,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
     | undefined;
 
   if (!user?.institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/parent");
   }
 
   if (user.role !== "PARENT") {

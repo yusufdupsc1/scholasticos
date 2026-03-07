@@ -1,4 +1,4 @@
-# Dashboard Perf Baseline — ScholaOPS / Dhadash v2.0.3
+# Dashboard Perf Baseline — ScholaOPS / BD-GPS v2.0.3
 
 > **Date captured:** 2026-03-04 (pre-optimisation baseline)
 > **Branch:** main · **Env:** local dev (`pnpm dev`)

@@ -58,7 +58,7 @@ export default async function PrimaryExamPrintPage({ params }: PageProps) {
   const user = session?.user as { institutionId?: string } | undefined;
 
   if (!user?.institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   const [institution, exam] = await Promise.all([

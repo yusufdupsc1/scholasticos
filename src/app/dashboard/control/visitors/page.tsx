@@ -22,7 +22,7 @@ export default async function VisitorControlPage() {
     | undefined;
 
   if (!user?.institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   if (!PRIVILEGED_ROLES.includes(user.role ?? "")) {

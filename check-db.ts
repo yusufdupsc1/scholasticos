@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 async function main() {
   const institution = await prisma.institution.findFirst({
-    where: { slug: "dhadash-demo" },
+    where: { slug: "bd-gps" },
   });
   console.log("Institution:", institution?.name);
   const users = await prisma.user.findMany({ select: { email: true } });

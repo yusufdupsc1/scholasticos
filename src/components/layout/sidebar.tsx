@@ -353,7 +353,7 @@ export function Sidebar({ session, isMobile }: SidebarProps) {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="font-bold text-sm tracking-tight truncate bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
-              Dhadash
+              BD-GPS
             </span>
             <span className="text-[9px] font-bold text-primary tracking-widest uppercase opacity-70">
               Ops Center

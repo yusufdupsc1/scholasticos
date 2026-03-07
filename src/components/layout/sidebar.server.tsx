@@ -316,9 +316,7 @@ export async function SidebarServer({ session }: { session: Session }) {
         <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-primary shadow-sm">
           <ShieldCheck className="h-4 w-4 text-primary-foreground" />
         </div>
-        <span className="truncate text-sm font-bold tracking-tight">
-          Dhadash
-        </span>
+        <span className="truncate text-sm font-bold tracking-tight">BD-GPS</span>
         <Badge
           variant="outline"
           className="ml-auto border-primary/20 bg-primary/5 py-0 font-mono text-[10px] text-primary"

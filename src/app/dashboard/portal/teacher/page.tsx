@@ -65,7 +65,7 @@ export default async function TeacherPortalPage() {
     | undefined;
 
   if (!user?.id || !user?.institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/teacher");
   }
 
   if (user.role !== "TEACHER") {

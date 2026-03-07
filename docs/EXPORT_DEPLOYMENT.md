@@ -12,8 +12,8 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/dhadash.git
-cd dhadash
+git clone https://github.com/yourusername/bd-gps.git
+cd bd-gps
 
 # Start services (PostgreSQL, Redis, App)
 docker-compose up -d
@@ -90,8 +90,8 @@ Create `.env.production`:
 
 ```env
 # Database
-DATABASE_URL=postgresql://user:pass@host:5432/dhadash
-DIRECT_URL=postgresql://user:pass@host:5432/dhadash  # For migrations
+DATABASE_URL=postgresql://user:pass@host:5432/bd-gps
+DIRECT_URL=postgresql://user:pass@host:5432/bd-gps  # For migrations
 
 # Authentication
 AUTH_SECRET=your-32-character-secret-key-here-minimum
@@ -143,23 +143,23 @@ pnpm exec prisma migrate deploy --name "add export tables"
 
 ```bash
 # 1. Build image
-docker build -t dhadash:latest .
+docker build -t bd-gps:latest .
 
 # 2. Run container
 docker run -d \
-  --name dhadash \
+  --name bd-gps \
   -p 3000:3000 \
   -e DATABASE_URL=$DATABASE_URL \
   -e AUTH_SECRET=$AUTH_SECRET \
   -e REDIS_URL=$REDIS_URL \
   -e NEXT_PUBLIC_APP_URL=https://yourdomain.com \
-  dhadash:latest
+  bd-gps:latest
 
 # 3. Run migrations
-docker exec dhadash pnpm exec prisma migrate deploy
+docker exec bd-gps pnpm exec prisma migrate deploy
 
 # 4. Check logs
-docker logs -f dhadash
+docker logs -f bd-gps
 ```
 
 ## Post-Deployment Verification
@@ -205,7 +205,7 @@ for i in {1..15}; do curl -X POST https://yourdomain.com/api/exports/request; do
 
 ```bash
 # Check export logs
-psql -U postgres -d dhadash -c "
+psql -U postgres -d bd-gps -c "
   SELECT
     user_id,
     export_type,
@@ -220,7 +220,7 @@ psql -U postgres -d dhadash -c "
 "
 
 # Check download tokens
-psql -U postgres -d dhadash -c "
+psql -U postgres -d bd-gps -c "
   SELECT
     id,
     user_id,

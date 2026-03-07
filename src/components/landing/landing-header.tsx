@@ -67,7 +67,7 @@ export function LandingHeader() {
             <LanguageToggle />
           </div>
           <Link
-            href="/auth/login"
+            href="/auth/login/admin"
             prefetch={false}
             className="hidden rounded-md border border-[#006a4e]/20 px-3 py-2 text-sm font-semibold text-[#006a4e] transition-colors hover:border-[#006a4e]/40 hover:bg-[#006a4e]/5 sm:inline-flex"
           >
@@ -78,7 +78,7 @@ export function LandingHeader() {
             prefetch={false}
             className="hidden rounded-md border border-[#da291c]/30 px-3 py-2 text-sm font-semibold text-[#a1271c] transition-colors hover:border-[#da291c]/45 hover:bg-[#fff4f4] lg:inline-flex"
           >
-            Owner Sign-In
+            Central Super Admin
           </Link>
           <Button
             asChild

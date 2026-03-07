@@ -1,7 +1,7 @@
 {
-  "name": "dhadash",
+  "name": "bd-gps",
   "version": "2.0.3",
-  "description": "Dhadash — Govt. Primary School Operations Platform",
+  "description": "BD-GPS — Govt. Primary School Operations Platform",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.30.3",

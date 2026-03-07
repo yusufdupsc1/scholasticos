@@ -1,5 +1,5 @@
 # docker-compose.yml
-# Production-grade docker compose for Dhadash
+# Production-grade docker compose for BD-GPS
 
 version: "3.9"
 
@@ -7,18 +7,18 @@ services:
   # PostgreSQL 17
   postgres:
     image: postgres:17-alpine
-    container_name: dhadash_db
+    container_name: bd-gps_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-dhadash}
+      POSTGRES_USER: ${POSTGRES_USER:-bd-gps}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
-      POSTGRES_DB: ${POSTGRES_DB:-dhadash}
+      POSTGRES_DB: ${POSTGRES_DB:-bd-gps}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dhadash}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bd-gps}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,7 +26,7 @@ services:
   # Redis (for session caching / rate limiting)
   redis:
     image: redis:7-alpine
-    container_name: dhadash_redis
+    container_name: bd-gps_redis
     restart: unless-stopped
     command: redis-server --requirepass ${REDIS_PASSWORD:-changeme_in_production}
     volumes:
@@ -44,10 +44,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: dhadash_app
+    container_name: bd-gps_app
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-dhadash}:${POSTGRES_PASSWORD:-changeme_in_production}@postgres:5432/${POSTGRES_DB:-dhadash}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bd-gps}:${POSTGRES_PASSWORD:-changeme_in_production}@postgres:5432/${POSTGRES_DB:-bd-gps}
       AUTH_SECRET: ${AUTH_SECRET}
       AUTH_URL: ${AUTH_URL:-http://localhost:3000}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
@@ -76,10 +76,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: dhadash_migrate
+    container_name: bd-gps_migrate
     command: sh -c "npx prisma migrate deploy && npx tsx prisma/seed.ts"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-dhadash}:${POSTGRES_PASSWORD:-changeme_in_production}@postgres:5432/${POSTGRES_DB:-dhadash}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bd-gps}:${POSTGRES_PASSWORD:-changeme_in_production}@postgres:5432/${POSTGRES_DB:-bd-gps}
     depends_on:
       postgres:
         condition: service_healthy
@@ -91,4 +91,4 @@ volumes:
 
 networks:
   default:
-    name: dhadash_network
+    name: bd-gps_network

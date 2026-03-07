@@ -130,7 +130,7 @@ jobs:
         env:
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/build"
           AUTH_SECRET: "build-secret-32-chars-minimum-here"
-          NEXT_PUBLIC_APP_URL: "https://app.dhadash.com"
+          NEXT_PUBLIC_APP_URL: "https://app.bd-gps.com"
           GOVT_PRIMARY_MODE: "true"
           NEXT_PUBLIC_GOVT_PRIMARY_MODE: "true"
           SKIP_ENV_VALIDATION: "true"
@@ -318,7 +318,7 @@ jobs:
           build-args: |
             DATABASE_URL=postgresql://postgres:postgres@localhost:5432/build
             AUTH_SECRET=build-secret-32-chars-minimum-here
-            NEXT_PUBLIC_APP_URL=https://app.dhadash.com
+            NEXT_PUBLIC_APP_URL=https://app.bd-gps.com
           push: true
           tags: ${{ steps.meta_ghcr.outputs.tags }}
           labels: ${{ steps.meta_ghcr.outputs.labels }}
@@ -347,7 +347,7 @@ jobs:
           build-args: |
             DATABASE_URL=postgresql://postgres:postgres@localhost:5432/build
             AUTH_SECRET=build-secret-32-chars-minimum-here
-            NEXT_PUBLIC_APP_URL=https://app.dhadash.com
+            NEXT_PUBLIC_APP_URL=https://app.bd-gps.com
           push: true
           tags: ${{ steps.meta_dockerhub.outputs.tags }}
           labels: ${{ steps.meta_dockerhub.outputs.labels }}

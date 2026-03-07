@@ -154,7 +154,7 @@ export async function registerInstitution(
     // Send welcome email (non-blocking)
     void sendEmail({
       to: email,
-      subject: `Welcome to Dhadash — ${institutionName}`,
+      subject: `Welcome to BD-GPS — ${institutionName}`,
       html: welcomeEmail(
         adminName,
         institutionName,
@@ -208,7 +208,7 @@ export async function forgotPassword(
 
     await sendEmail({
       to: email,
-      subject: "Reset your Dhadash password",
+      subject: "Reset your BD-GPS password",
       html: passwordResetEmail(resetUrl),
     });
 

@@ -34,8 +34,8 @@ export function createInstitutionFixture(
 ): Institution {
   return {
     id: faker.string.uuid(),
-    name: "dhadash-demo Academy",
-    slug: "dhadash-demo",
+    name: "bd-gps Academy",
+    slug: "bd-gps",
     email: "admin@school.edu",
     phone: "+8801700000000",
     address: "Dhaka, Bangladesh",

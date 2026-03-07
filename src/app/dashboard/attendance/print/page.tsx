@@ -18,7 +18,7 @@ export default async function AttendancePrintPage({ searchParams }: PageProps) {
   const institutionId = currentUser?.institutionId;
 
   if (!institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   const classId = params.classId;
@@ -125,7 +125,7 @@ export default async function AttendancePrintPage({ searchParams }: PageProps) {
         <h1 className="text-xl font-bold">উপস্থিতি রেজিস্টার</h1>
         <p className="text-xs text-slate-600">Attendance Register</p>
         <p className="mt-2 text-sm font-semibold">
-          {institution?.name ?? "Dhadash School"}
+          {institution?.name ?? "BD-GPS School"}
         </p>
         <p className="text-xs text-slate-600">
           {institution?.address ?? "Bangladesh"}

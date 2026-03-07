@@ -11,8 +11,8 @@ import {
 import { tFromDict } from "@/lib/i18n/t";
 
 const LOCALE_COOKIE = "locale";
-const LOCALE_STORAGE_KEY = "dhadash.locale";
-const LOCALE_EVENT = "dhadash:locale-changed";
+const LOCALE_STORAGE_KEY = "bd-gps.locale";
+const LOCALE_EVENT = "bd-gps:locale-changed";
 
 function readLocalePreference(): SupportedLocale {
   if (typeof document === "undefined") return "bn";

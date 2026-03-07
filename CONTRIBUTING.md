@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in improving Dhadash.
+Thanks for your interest in improving BD-GPS.
 
 ## 1) Setup
 

@@ -1,5 +1,5 @@
 
- RUN  v3.2.4 /home/neo/Videos/dhadash
+ RUN  v3.2.4 /home/neo/Videos/bd-gps
 
  ❯ tests/unit/actions/settings.test.ts (7 tests | 1 failed) 48ms
    × Settings Server Actions > getInstitutionSettings > should return institution and settings 24ms

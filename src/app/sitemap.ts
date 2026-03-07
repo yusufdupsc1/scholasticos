@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_APP_URL || "https://app.dhadash.com";
+  const base = process.env.NEXT_PUBLIC_APP_URL || "https://app.bd-gps.com";
   const now = new Date();
 
   return [

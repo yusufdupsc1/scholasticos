@@ -101,6 +101,22 @@ function withLocaleCookie(response: NextResponse, locale: SupportedLocale) {
   return response;
 }
 
+function resolveLoginPathForDashboard(pathname: string): string {
+  if (pathname.startsWith("/dashboard/portal/teacher")) {
+    return "/auth/login/teacher";
+  }
+  if (pathname.startsWith("/dashboard/portal/student")) {
+    return "/auth/login/student";
+  }
+  if (pathname.startsWith("/dashboard/portal/parent")) {
+    return "/auth/login/parent";
+  }
+  if (pathname.startsWith("/dashboard/owner")) {
+    return "/auth/login/owner";
+  }
+  return "/auth/login/admin";
+}
+
 export default async function middleware(req: NextRequest) {
   const parsedPath = parseLocalePrefix(req.nextUrl.pathname);
   const pathname = parsedPath.pathname;
@@ -192,8 +208,9 @@ export default async function middleware(req: NextRequest) {
       });
     }
     if (pathname.startsWith("/dashboard")) {
+      const loginPath = resolveLoginPathForDashboard(pathname);
       const loginUrl = new URL(
-        withLocalePrefix("/auth/login", locale, hasLocalePrefix),
+        withLocalePrefix(loginPath, locale, hasLocalePrefix),
         req.url,
       );
       loginUrl.searchParams.set(

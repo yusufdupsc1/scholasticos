@@ -24,13 +24,13 @@ describe("totp", () => {
   it("builds valid otpauth URI", () => {
     const secret = generateTotpSecret();
     const uri = createOtpAuthUri({
-      issuer: "Dhadash",
+      issuer: "BD-GPS",
       accountName: "admin@school.edu",
       secret,
     });
 
     expect(uri.startsWith("otpauth://totp/")).toBe(true);
-    expect(uri).toContain("issuer=Dhadash");
+    expect(uri).toContain("issuer=BD-GPS");
     expect(uri).toContain(secret);
   });
 });

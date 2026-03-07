@@ -225,7 +225,7 @@ export default function RequestAccessPage() {
         <p className="text-center text-sm text-muted-foreground">
           Already approved?{" "}
           <Link
-            href="/auth/login"
+            href="/auth/login/admin"
             className="text-primary underline-offset-4 hover:underline"
           >
             Sign in

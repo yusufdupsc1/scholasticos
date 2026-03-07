@@ -556,7 +556,7 @@ function AcademicTab({
             id="cert-footer"
             value={form.certificateFooter ?? ""}
             onChange={(e) => set("certificateFooter", e.target.value)}
-            placeholder="Verified by Dhadash Academy"
+            placeholder="Verified by BD-GPS Academy"
             disabled={!canEdit}
           />
         </div>

@@ -8,8 +8,8 @@ import { useLocale } from "@/lib/i18n/client";
 import type { SupportedLocale } from "@/lib/i18n/getDict";
 
 const LOCALE_COOKIE = "locale";
-const LOCALE_STORAGE_KEY = "dhadash.locale";
-const LOCALE_EVENT = "dhadash:locale-changed";
+const LOCALE_STORAGE_KEY = "bd-gps.locale";
+const LOCALE_EVENT = "bd-gps:locale-changed";
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 function stripLocalePrefix(pathname: string): string {

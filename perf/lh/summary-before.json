@@ -12,8 +12,8 @@
       "cls": "0",
       "si": "43.7 s",
       "jsBytes": 628962,
-      "htmlPath": "/home/neo/Videos/dhadash/perf/lh/dashboard-2026-03-03T19-07-27.html",
-      "jsonPath": "/home/neo/Videos/dhadash/perf/lh/dashboard-2026-03-03T19-07-27.json"
+      "htmlPath": "/home/neo/Videos/bd-gps/perf/lh/dashboard-2026-03-03T19-07-27.html",
+      "jsonPath": "/home/neo/Videos/bd-gps/perf/lh/dashboard-2026-03-03T19-07-27.json"
     },
     {
       "slug": "students",
@@ -25,8 +25,8 @@
       "cls": "–",
       "si": "–",
       "jsBytes": 0,
-      "htmlPath": "/home/neo/Videos/dhadash/perf/lh/students-2026-03-03T19-08-24.html",
-      "jsonPath": "/home/neo/Videos/dhadash/perf/lh/students-2026-03-03T19-08-24.json"
+      "htmlPath": "/home/neo/Videos/bd-gps/perf/lh/students-2026-03-03T19-08-24.html",
+      "jsonPath": "/home/neo/Videos/bd-gps/perf/lh/students-2026-03-03T19-08-24.json"
     },
     {
       "slug": "finance",
@@ -38,8 +38,8 @@
       "cls": "–",
       "si": "–",
       "jsBytes": 0,
-      "htmlPath": "/home/neo/Videos/dhadash/perf/lh/finance-2026-03-03T19-09-35.html",
-      "jsonPath": "/home/neo/Videos/dhadash/perf/lh/finance-2026-03-03T19-09-35.json"
+      "htmlPath": "/home/neo/Videos/bd-gps/perf/lh/finance-2026-03-03T19-09-35.html",
+      "jsonPath": "/home/neo/Videos/bd-gps/perf/lh/finance-2026-03-03T19-09-35.json"
     }
   ]
 }

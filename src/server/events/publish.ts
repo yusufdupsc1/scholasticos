@@ -7,19 +7,19 @@ type EventHandler = (event: DomainEvent) => void;
 const MAX_RECENT_EVENTS = 250;
 
 const globalStore = globalThis as typeof globalThis & {
-  __dhadashEventBus?: EventEmitter;
-  __dhadashEventHistory?: DomainEvent[];
+  __bdGpsEventBus?: EventEmitter;
+  __bdGpsEventHistory?: DomainEvent[];
 };
 
-const bus = globalStore.__dhadashEventBus ?? new EventEmitter();
-const history = globalStore.__dhadashEventHistory ?? [];
+const bus = globalStore.__bdGpsEventBus ?? new EventEmitter();
+const history = globalStore.__bdGpsEventHistory ?? [];
 
-if (!globalStore.__dhadashEventBus) {
+if (!globalStore.__bdGpsEventBus) {
   bus.setMaxListeners(200);
-  globalStore.__dhadashEventBus = bus;
+  globalStore.__bdGpsEventBus = bus;
 }
-if (!globalStore.__dhadashEventHistory) {
-  globalStore.__dhadashEventHistory = history;
+if (!globalStore.__bdGpsEventHistory) {
+  globalStore.__bdGpsEventHistory = history;
 }
 
 export function createDomainEvent<T extends DomainEventType>(

@@ -74,7 +74,7 @@ function ResetForm() {
         setError(res.error);
       } else {
         setDone(true);
-        setTimeout(() => router.push("/auth/login"), 3000);
+        setTimeout(() => router.push("/auth/login/admin"), 3000);
       }
     });
   };
@@ -229,7 +229,7 @@ export default function ResetPasswordPage() {
         <p className="text-center text-sm text-muted-foreground">
           Remembered your password?{" "}
           <Link
-            href="/auth/login"
+            href="/auth/login/admin"
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
             Sign in

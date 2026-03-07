@@ -32,7 +32,7 @@ export async function TopBarServer({ session }: { session: Session }) {
         : t("school_name")
     : t("institution");
   const institutionName =
-    (session.user as { institutionName?: string }).institutionName ?? "Dhadash";
+    (session.user as { institutionName?: string }).institutionName ?? "BD-GPS";
   const homeHref = getDefaultDashboardPath(role);
   const userName = session.user.name ?? "User";
   const initials =

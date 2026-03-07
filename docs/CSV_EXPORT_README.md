@@ -1,6 +1,6 @@
 # 🚀 CSV Export Feature - Production-Grade Implementation
 
-Enterprise-ready CSV export system for Dhadash with comprehensive security, testing, and deployment infrastructure.
+Enterprise-ready CSV export system for BD-GPS with comprehensive security, testing, and deployment infrastructure.
 
 ## ✨ Features Implemented
 
@@ -219,19 +219,19 @@ pnpm exec prisma migrate deploy
 
 ```bash
 # Build image
-docker build -t dhadash:latest .
+docker build -t bd-gps:latest .
 
 # Run container
 docker run -d \
-  --name dhadash \
+  --name bd-gps \
   -p 3000:3000 \
   -e DATABASE_URL=postgresql://... \
   -e AUTH_SECRET=... \
   -e REDIS_URL=... \
-  dhadash:latest
+  bd-gps:latest
 
 # Run migrations
-docker exec dhadash pnpm exec prisma migrate deploy
+docker exec bd-gps pnpm exec prisma migrate deploy
 ```
 
 ### Verify Deployment
@@ -365,7 +365,7 @@ For issues or questions:
 
 ## 📝 License
 
-This implementation follows the Dhadash project license.
+This implementation follows the BD-GPS project license.
 
 ---
 

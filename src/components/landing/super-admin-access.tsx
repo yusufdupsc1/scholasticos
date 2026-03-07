@@ -11,41 +11,48 @@ export function SuperAdminAccess() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#006a4e]">
-              Owner Control Access
+              BD-GPS Central Control Access
             </p>
             <h2 className="mt-1 text-xl font-black text-slate-900">
-              সুপার অ্যাডমিন সাইন-ইন (মন্ত্রণালয় নিয়ন্ত্রিত)
+              সেন্ট্রাল সুপার অ্যাডমিন সাইন-ইন (BD-GPS নিয়ন্ত্রিত)
             </h2>
           </div>
           <span className="inline-flex items-center gap-1 rounded-full border border-[#006a4e]/25 bg-[#f2faf7] px-3 py-1 text-xs font-semibold text-[#006a4e]">
             <ShieldCheck className="h-3.5 w-3.5" />
-            Ministry Authority Only
+            Central Authority Only
           </span>
         </div>
 
         <p className="mb-4 text-sm text-slate-700">
-          কেবল অনুমোদিত মালিক-স্তরের অ্যাকাউন্ট এই কনসোলে প্রবেশ করতে পারবে।
-          সফল লগইনের পর সরাসরি Owner Dashboard-এ নেওয়া হবে।
+          কেবল অনুমোদিত সেন্ট্রাল সুপার অ্যাডমিন অ্যাকাউন্ট এই কনসোলে প্রবেশ
+          করতে পারবে। সফল লগইনের পর সরাসরি Central Super Admin Dashboard-এ
+          নেওয়া হবে।
         </p>
+
+        <div className="mb-4 rounded-lg border border-[#da291c]/20 bg-[#fff7f7] px-3 py-2 text-xs text-slate-700">
+          <p className="font-semibold text-[#a1271c]">Demo Central Access</p>
+          <p className="mt-1 font-mono">username: yusuf_ali</p>
+          <p className="font-mono">password: yusuf_ali</p>
+        </div>
 
         <form action={ownerSignInAction} className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
           <input
             type="text"
             name="username"
             autoComplete="username"
-            defaultValue="Yusuf_Ali"
-            aria-label="Owner username"
+            defaultValue="yusuf_ali"
+            aria-label="Central super admin username"
             className="h-11 rounded-md border border-[#006a4e]/25 bg-white px-3 text-sm outline-none ring-offset-1 focus:border-[#006a4e] focus:ring-2 focus:ring-[#006a4e]/20"
-            placeholder="Owner username"
+            placeholder="Central super admin username"
             required
           />
           <input
             type="password"
             name="password"
             autoComplete="current-password"
-            aria-label="Owner password"
+            aria-label="Central super admin password"
             className="h-11 rounded-md border border-[#006a4e]/25 bg-white px-3 text-sm outline-none ring-offset-1 focus:border-[#006a4e] focus:ring-2 focus:ring-[#006a4e]/20"
-            placeholder="Owner password"
+            placeholder="Central super admin password"
             required
           />
           <button
@@ -53,7 +60,7 @@ export function SuperAdminAccess() {
             className="primary-cta inline-flex h-11 items-center justify-center rounded-md px-5 text-sm font-bold"
           >
             <LockKeyhole className="mr-2 h-4 w-4" />
-            Owner Sign In
+            Central Super Admin Sign In
           </button>
           <input
             type="text"

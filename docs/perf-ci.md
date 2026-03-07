@@ -1,6 +1,6 @@
 # Performance CI Regression Checks
 
-This document outlines the performance automation implemented to prevent regressions in ScholasticOS (Dhadash).
+This document outlines the performance automation implemented to prevent regressions in ScholasticOS (BD-GPS).
 
 ## 1. Playwright E2E Performance Tests
 

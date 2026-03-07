@@ -6,7 +6,7 @@ on:
 env:
   NODE_VERSION: "22"
   PNPM_VERSION: "10.30.3"
-  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/dhadash"
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/bd-gps"
   AUTH_SECRET: "test-secret-32-characters-minimum"
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: dhadash
+          POSTGRES_DB: bd-gps
         options: >-
           --health-cmd pg_isready
           --health-interval 10s

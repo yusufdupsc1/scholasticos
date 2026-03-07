@@ -12,7 +12,7 @@ const csvPath =
   process.env.BD_DEMO_CSV_PATH ||
   "/home/neo/Downloads/BD_School_60_Students_Demo_Data_2026.csv";
 
-const institutionSlug = process.env.DEMO_INSTITUTION_SLUG || "dhadash-demo";
+const institutionSlug = process.env.DEMO_INSTITUTION_SLUG || "bd-gps";
 const TARGET_STUDENTS = 60;
 const STUDENTS_PER_CLASS = 10;
 
@@ -79,7 +79,7 @@ function safeEmailFromName(name, suffix) {
     .replace(/^\.+|\.+$/g, "")
     .slice(0, 40);
 
-  return `${normalized || "guardian"}.${suffix}@noreply.dhadash.local`;
+  return `${normalized || "guardian"}.${suffix}@noreply.bd-gps.local`;
 }
 
 async function cleanInstitutionData(institutionId) {

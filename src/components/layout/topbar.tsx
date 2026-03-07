@@ -1,11 +1,6 @@
 "use client";
 
-import { Bell, Menu } from "lucide-react";
-import type { Session } from "next-auth";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { useGovtPrimaryT, useT } from "@/lib/i18n/client";
-import { isGovtPrimaryModeEnabled } from "@/lib/config";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { isGovtPrimaryModeEnabled } from "@/lib/config";
+import { useGovtPrimaryT, useT } from "@/lib/i18n/client";
+import { Bell, Menu } from "lucide-react";
+import type { Session } from "next-auth";
+import { useState } from "react";
 import { Sidebar } from "./sidebar";
 
 export function TopBar({ session }: { session: Session }) {
@@ -66,7 +66,7 @@ export function TopBar({ session }: { session: Session }) {
           </p>
           <p className="truncate text-sm font-bold text-foreground/90 leading-none">
             {(session.user as { institutionName?: string }).institutionName ??
-              "Dhadash"}
+              "BD-GPS"}
           </p>
         </div>
       </div>

@@ -44,7 +44,7 @@ export function RegisterPageClient() {
         setError(res.error);
       } else {
         toast.success("Institution registered! Please sign in.");
-        router.push("/auth/login");
+        router.push("/auth/login/admin");
       }
     });
   };
@@ -61,7 +61,7 @@ export function RegisterPageClient() {
             Create your institution
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Set up Dhadash for your school in under a minute.
+            Set up BD-GPS for your school in under a minute.
           </p>
         </div>
 
@@ -200,7 +200,7 @@ export function RegisterPageClient() {
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link
-            href="/auth/login"
+            href="/auth/login/admin"
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
             Sign in

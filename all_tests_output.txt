@@ -1,9 +1,9 @@
 
- RUN  v3.2.4 /home/neo/Videos/dhadash
+ RUN  v3.2.4 /home/neo/Videos/bd-gps
 
 stderr | tests/unit/actions/auth.test.ts > Auth Server Actions > registers institution and super admin
 [register] error: TypeError: Cannot read properties of undefined (reading 'createMany')
-    at [90m/home/neo/Videos/dhadash/[39msrc/server/actions/auth.ts:143:28
+    at [90m/home/neo/Videos/bd-gps/[39msrc/server/actions/auth.ts:143:28
 [90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
 
  ❯ tests/unit/actions/auth.test.ts (6 tests | 1 failed) 111ms

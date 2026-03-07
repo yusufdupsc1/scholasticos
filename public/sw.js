@@ -1,6 +1,6 @@
-const STATIC_CACHE = "dhadash-static-v2";
-const RUNTIME_CACHE = "dhadash-runtime-v1";
-const DASHBOARD_CACHE = "dhadash-dashboard-v1";
+const STATIC_CACHE = "bd-gps-static-v2";
+const RUNTIME_CACHE = "bd-gps-runtime-v1";
+const DASHBOARD_CACHE = "bd-gps-dashboard-v1";
 
 const STATIC_URLS = [
   "/",

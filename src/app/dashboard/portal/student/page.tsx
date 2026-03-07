@@ -133,7 +133,7 @@ export default async function StudentPortalPage({ searchParams }: PageProps) {
     | undefined;
 
   if (!user?.institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/student");
   }
 
   if (user.role !== "STUDENT") {

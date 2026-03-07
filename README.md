@@ -1,8 +1,8 @@
-# Dhadash
+# BD-GPS
 
-[![CI / CD](https://github.com/yusufdupsc1/Dhadash/actions/workflows/ci.yml/badge.svg)](https://github.com/yusufdupsc1/Dhadash/actions/workflows/ci.yml)
-[![GHCR](https://img.shields.io/badge/GHCR-ghcr.io%2Fyusufdupsc1%2Fdhadash-2496ED?logo=docker)](https://github.com/yusufdupsc1/Dhadash/pkgs/container/dhadash)
-[![Docker Hub](https://img.shields.io/docker/pulls/yusufdupsc1/dhadash?logo=docker&label=Docker%20Pulls)](https://hub.docker.com/r/yusufdupsc1/dhadash)
+[![CI / CD](https://github.com/yusufdupsc1/BD-GPS/actions/workflows/ci.yml/badge.svg)](https://github.com/yusufdupsc1/BD-GPS/actions/workflows/ci.yml)
+[![GHCR](https://img.shields.io/badge/GHCR-ghcr.io%2Fyusufdupsc1%2Fbd-gps-2496ED?logo=docker)](https://github.com/yusufdupsc1/BD-GPS/pkgs/container/bd-gps)
+[![Docker Hub](https://img.shields.io/docker/pulls/yusufdupsc1/bd-gps?logo=docker&label=Docker%20Pulls)](https://hub.docker.com/r/yusufdupsc1/bd-gps)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748)](https://www.prisma.io/)
@@ -10,7 +10,7 @@
 
 Bangladesh Govt. Primary (Class 1-5) focused school operations platform.
 
-Dhadash is a production-oriented fullstack application that prioritizes daily office workflows for সরকারি প্রাথমিক বিদ্যালয়: attendance register, fee collection, receipt printing, and communication.
+BD-GPS is a production-oriented fullstack application that prioritizes daily office workflows for সরকারি প্রাথমিক বিদ্যালয়: attendance register, fee collection, receipt printing, and communication.
 
 ## Why This Repository Is Strong
 
@@ -19,6 +19,14 @@ Dhadash is a production-oriented fullstack application that prioritizes daily of
 - Role-aware access control with Auth.js v5 + JWT claims.
 - Production guardrails: strict type checks, linting, build gating, Docker runtime, and CI pipeline.
 - Security-first defaults: CSP, HSTS, permissions policy, input validation, and environment validation.
+
+## Engineering Signal (Recruiter / Reviewer Friendly)
+
+- **Architecture maturity:** clear layering across UI, domain actions, data, and integrations.
+- **Operational confidence:** health endpoint, reproducible builds, migration+seed flows, CI quality gates.
+- **Security posture:** scoped auth, tenant boundaries, RBAC, strict middleware enforcement.
+- **Delivery readiness:** Dockerized runtime, GitHub Actions workflows, deployment runbooks.
+- **Test depth:** unit + integration suites covering auth, domain actions, services, and utility layers.
 
 ## Product Scope
 
@@ -66,8 +74,8 @@ For deeper design details, see [Architecture](./docs/ARCHITECTURE.md).
 ### Quick Start
 
 ```bash
-git clone https://github.com/yusufdupsc1/Dhadash.git
-cd Dhadash
+git clone https://github.com/yusufdupsc1/BD-GPS.git
+cd BD-GPS
 pnpm install
 cp .env.example .env.local
 pnpm db:push
@@ -127,24 +135,24 @@ Full runbook: [Deployment Guide](./docs/DEPLOYMENT.md).
 Pull latest from Docker Hub:
 
 ```bash
-docker pull yusufdupsc1/dhadash:latest
+docker pull yusufdupsc1/bd-gps:latest
 ```
 
 Pull latest from GHCR:
 
 ```bash
-docker pull ghcr.io/yusufdupsc1/dhadash:latest
+docker pull ghcr.io/yusufdupsc1/bd-gps:latest
 ```
 
 Run container:
 
 ```bash
-docker run --name dhadash \
+docker run --name bd-gps \
   -p 3000:3000 \
   -e DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB" \
   -e AUTH_SECRET="replace-with-32-plus-char-secret" \
   -e NEXT_PUBLIC_APP_URL="http://localhost:3000" \
-  -d yusufdupsc1/dhadash:latest
+  -d yusufdupsc1/bd-gps:latest
 ```
 
 ## API Surface

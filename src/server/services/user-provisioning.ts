@@ -28,7 +28,7 @@ function normalizeEmail(value: string) {
 
 function buildStarterPassword(seed: string) {
   const normalizedSeed =
-    seed.trim().replace(/\s+/g, "").slice(0, 18) || "dhadash";
+    seed.trim().replace(/\s+/g, "").slice(0, 18) || "bd-gps";
   const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `${normalizedSeed}@${suffix}`;
 }

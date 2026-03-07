@@ -35,7 +35,7 @@ export default async function StudentDetailsPage({
   const session = await auth();
   const user = session?.user as { institutionId?: string } | undefined;
   if (!user?.institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   const { id } = await params;

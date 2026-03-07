@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Dhadash",
-    short_name: "Dhadash",
+    name: "BD-GPS",
+    short_name: "BD-GPS",
     description:
       "Govt. Primary school operations: attendance register, fees, receipt, and notices.",
     start_url: "/",

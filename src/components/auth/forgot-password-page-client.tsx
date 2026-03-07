@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import Link from "next/link";
-import { Loader2, GraduationCap, MailCheck, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { forgotPassword } from "@/server/actions/auth";
+import { ArrowLeft, GraduationCap, Loader2, MailCheck } from "lucide-react";
+import Link from "next/link";
+import { useState, useTransition } from "react";
 
 export function ForgotPasswordPageClient() {
   const [pending, startTransition] = useTransition();
@@ -108,7 +108,7 @@ export function ForgotPasswordPageClient() {
 
         <p className="text-center text-sm text-muted-foreground">
           <Link
-            href="/auth/login"
+            href="/auth/login/admin"
             className="inline-flex items-center gap-1.5 font-medium text-primary underline-offset-4 hover:underline"
           >
             <ArrowLeft className="h-3.5 w-3.5" />

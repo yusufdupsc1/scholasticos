@@ -33,7 +33,7 @@ export default async function PrimaryExamsPage({ searchParams }: PageProps) {
   )?.institutionId;
 
   if (!institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   const classes = await safeLoader(

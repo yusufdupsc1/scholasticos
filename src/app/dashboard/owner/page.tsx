@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
-  title: "Owner Super Admin",
+  title: "Central Super Admin",
 };
 
 const GOVERNANCE_ROLES = [
@@ -26,7 +26,7 @@ const GOVERNANCE_ROLES = [
 ] as const;
 
 const ROLE_LABELS: Record<string, string> = {
-  SUPER_ADMIN: "Owner Super Admin",
+  SUPER_ADMIN: "Central Super Admin",
   ADMIN: "Admin",
   PRINCIPAL: "Headmaster",
   HEAD_TEACHER: "Head Teacher",
@@ -64,7 +64,7 @@ export default async function OwnerDashboardPage() {
     | undefined;
 
   if (!user?.id) {
-    redirect("/auth/login");
+    redirect("/auth/login/owner?institution=mope-owner-control");
   }
 
   if (user.role !== "SUPER_ADMIN") {
@@ -238,7 +238,7 @@ export default async function OwnerDashboardPage() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-[#006a4e]">
-              Owner Super Admin Console
+              Central Super Admin Console
             </p>
             <h1 className="mt-1 text-3xl font-black text-slate-900 sm:text-4xl">
               জাতীয় নিয়ন্ত্রণ ড্যাশবোর্ড

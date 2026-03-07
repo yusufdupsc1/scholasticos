@@ -1,22 +1,22 @@
 // prisma/seed.ts
-import { config as loadEnv } from "dotenv";
 import {
-  PrismaClient,
-  Role,
-  Plan,
-  Gender,
-  StudentStatus,
-  EmployeeStatus,
   AttendanceStatus,
-  FeeType,
-  FeeStatus,
+  EmployeeStatus,
   EventType,
+  FeeStatus,
+  FeeType,
+  Gender,
+  Plan,
   Priority,
+  PrismaClient,
   RecordPeriodType,
   RecordSource,
+  Role,
   StudentRecordType,
+  StudentStatus,
 } from "@prisma/client";
 import bcryptjs from "bcryptjs";
+import { config as loadEnv } from "dotenv";
 import { GOVT_PRIMARY_FEE_PRESETS } from "../src/lib/finance/fee-presets";
 
 // Keep seed behavior deterministic across shells:
@@ -46,7 +46,7 @@ function makeSeedPdfDataUri(title: string, studentName: string) {
 }
 
 async function main() {
-  console.log("🌱 Seeding Dhadash database...\n");
+  console.log("🌱 Seeding BD-GPS database...\n");
   const enableDemoPlaceholders =
     (process.env.ENABLE_DEMO_PLACEHOLDERS ?? "false") === "true";
   const seedDemoStudents =
@@ -60,11 +60,11 @@ async function main() {
 
   // ── Institution ──────────────────────────────
   const institution = await db.institution.upsert({
-    where: { slug: "dhadash-demo" },
+    where: { slug: "bd-gps" },
     update: {},
     create: {
-      name: "Dhadash Govt Primary Demo School",
-      slug: "dhadash-demo",
+      name: "BD-GPS Govt Primary Demo School",
+      slug: "bd-gps",
       email: "admin@school.edu",
       phone: "+8801700000000",
       address: "123 Innovation Way",
@@ -90,7 +90,7 @@ async function main() {
       signatoryTitle: "Principal",
       coSignatoryName: "Ayesha Sultana",
       coSignatoryTitle: "Class Teacher",
-      certificateFooter: "Issued by Dhadash Govt Primary Demo School, Dhaka",
+      certificateFooter: "Issued by BD-GPS Govt Primary Demo School, Dhaka",
     },
   });
 
@@ -126,6 +126,32 @@ async function main() {
     },
   });
   console.log(`✅ Admin user: ${adminUser.email}`);
+
+  // ── Super Admin (localhost demo) ───────────────────────────────
+  const superAdminPassword = await bcryptjs.hash("superadmin123", 12);
+  const superAdminUser = await db.user.upsert({
+    where: { email: "superadmin@school.edu" },
+    update: {
+      name: "Demo Super Admin",
+      password: superAdminPassword,
+      role: Role.SUPER_ADMIN,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      institutionId: institution.id,
+    },
+    create: {
+      name: "Demo Super Admin",
+      email: "superadmin@school.edu",
+      password: superAdminPassword,
+      role: Role.SUPER_ADMIN,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      institutionId: institution.id,
+    },
+  });
+  console.log(`✅ Super admin user: ${superAdminUser.email}`);
 
   // ── Owner Super Admin (Ministry Authority) ─────────────
   const ministryInstitution = await db.institution.upsert({
@@ -195,6 +221,7 @@ async function main() {
       institutionId: institution.id,
     },
   });
+  console.log("✅ Principal user: principal@school.edu");
 
   // ── Subjects ─────────────────────────────────
   const subjectData = [
@@ -323,6 +350,161 @@ async function main() {
     teachers.push(teacher);
   }
   console.log(`✅ Teachers: ${teachers.length}`);
+
+  // ── Demo Teacher User (tenant-scoped teacher login) ───────────────
+  const demoTeacher = teachers[0];
+  const teacherPwd = await bcryptjs.hash("teacher123", 12);
+  const teacherUser = await db.user.upsert({
+    where: { email: "teacher.demo@school.edu" },
+    update: {
+      name: `${demoTeacher.firstName} ${demoTeacher.lastName}`,
+      password: teacherPwd,
+      role: Role.TEACHER,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      phone: "+8801700000011",
+      institutionId: institution.id,
+    },
+    create: {
+      name: `${demoTeacher.firstName} ${demoTeacher.lastName}`,
+      email: "teacher.demo@school.edu",
+      password: teacherPwd,
+      role: Role.TEACHER,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      phone: "+8801700000011",
+      institutionId: institution.id,
+    },
+  });
+
+  await db.teacher.update({
+    where: { id: demoTeacher.id },
+    data: {
+      email: "teacher.demo@school.edu",
+      phone: "+8801700000011",
+      userId: teacherUser.id,
+    },
+  });
+  console.log("✅ Teacher user: teacher.demo@school.edu");
+
+  // ── Demo Student + Parent + Users (tenant-scoped portal logins) ───
+  const demoStudent = await db.student.upsert({
+    where: {
+      institutionId_studentId: {
+        institutionId: institution.id,
+        studentId: "STU-DEMO-0001",
+      },
+    },
+    update: {
+      firstName: "Rafi",
+      lastName: "Student",
+      email: "student.demo@school.edu",
+      phone: "+8801700000022",
+      classId: classes[0]?.id,
+      status: StudentStatus.ACTIVE,
+      guardianPhone: "+8801700000033",
+    },
+    create: {
+      studentId: "STU-DEMO-0001",
+      firstName: "Rafi",
+      lastName: "Student",
+      email: "student.demo@school.edu",
+      phone: "+8801700000022",
+      classId: classes[0]?.id,
+      status: StudentStatus.ACTIVE,
+      fatherName: "Kamal Uddin",
+      motherName: "Sharmin Akter",
+      guardianPhone: "+8801700000033",
+      institutionId: institution.id,
+    },
+  });
+
+  const studentPwd = await bcryptjs.hash("student123", 12);
+  await db.user.upsert({
+    where: { email: "student.demo@school.edu" },
+    update: {
+      name: `${demoStudent.firstName} ${demoStudent.lastName}`,
+      password: studentPwd,
+      role: Role.STUDENT,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      phone: "+8801700000022",
+      institutionId: institution.id,
+    },
+    create: {
+      name: `${demoStudent.firstName} ${demoStudent.lastName}`,
+      email: "student.demo@school.edu",
+      password: studentPwd,
+      role: Role.STUDENT,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      phone: "+8801700000022",
+      institutionId: institution.id,
+    },
+  });
+  console.log("✅ Student user: student.demo@school.edu");
+
+  const existingParent = await db.parent.findFirst({
+    where: {
+      studentId: demoStudent.id,
+      email: { equals: "parent.demo@school.edu", mode: "insensitive" },
+    },
+    select: { id: true },
+  });
+
+  if (existingParent) {
+    await db.parent.update({
+      where: { id: existingParent.id },
+      data: {
+        firstName: "Parvin",
+        lastName: "Guardian",
+        phone: "+8801700000033",
+        relation: "Mother",
+      },
+    });
+  } else {
+    await db.parent.create({
+      data: {
+        firstName: "Parvin",
+        lastName: "Guardian",
+        email: "parent.demo@school.edu",
+        phone: "+8801700000033",
+        relation: "Mother",
+        studentId: demoStudent.id,
+      },
+    });
+  }
+
+  const parentPwd = await bcryptjs.hash("parent123", 12);
+  await db.user.upsert({
+    where: { email: "parent.demo@school.edu" },
+    update: {
+      name: "Parvin Guardian",
+      password: parentPwd,
+      role: Role.PARENT,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      phone: "+8801700000033",
+      institutionId: institution.id,
+    },
+    create: {
+      name: "Parvin Guardian",
+      email: "parent.demo@school.edu",
+      password: parentPwd,
+      role: Role.PARENT,
+      emailVerified: new Date(),
+      approvalStatus: "APPROVED",
+      isActive: true,
+      phone: "+8801700000033",
+      institutionId: institution.id,
+    },
+  });
+  console.log("✅ Parent user: parent.demo@school.edu");
 
   if (seedDemoStudents) {
     // ── Students ─────────────────────────────────
@@ -554,7 +736,7 @@ async function main() {
   console.log(`✅ Announcements seeded`);
 
   // ── Demo placeholders: progress + certificates ──
-  if (institution.slug === "dhadash-demo" && enableDemoPlaceholders) {
+  if (institution.slug === "bd-gps" && enableDemoPlaceholders) {
     const demoStudents = await db.student.findMany({
       where: { institutionId: institution.id, status: StudentStatus.ACTIVE },
       include: { class: true },
@@ -692,8 +874,13 @@ async function main() {
 
   console.log("\n🎉 Seeding complete!\n");
   console.log("Demo credentials:");
+  console.log("  SuperAdmin: superadmin@school.edu / superadmin123");
   console.log("  Admin:     admin@school.edu / admin123");
   console.log("  Principal: principal@school.edu / principal123");
+  console.log("  Teacher:   teacher.demo@school.edu / teacher123");
+  console.log("  Student:   student.demo@school.edu / student123");
+  console.log("  Parent:    parent.demo@school.edu / parent123");
+  console.log("  Owner:     yusuf_ali / yusuf_ali");
 }
 
 main()

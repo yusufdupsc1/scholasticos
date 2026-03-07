@@ -27,7 +27,7 @@ export default async function TimetablePrintPage({ searchParams }: PageProps) {
   const institutionId = currentUser?.institutionId;
 
   if (!institutionId) {
-    redirect("/auth/login");
+    redirect("/auth/login/admin");
   }
 
   if (!params.classId) {
