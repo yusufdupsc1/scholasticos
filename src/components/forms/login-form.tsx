@@ -464,7 +464,9 @@ export function LoginForm({
     setValue("loginMode", "PASSWORD", { shouldValidate: true });
     setValue(
       "institution",
-      normalizeInstitutionSlug(lockedInstitution ?? "bd-gps"),
+      normalizeInstitutionSlug(
+        lockedInstitution === "mope-owner-control" ? lockedInstitution : "bd-gps",
+      ),
       { shouldValidate: true },
     );
     setValue("email", email, { shouldValidate: true });
@@ -790,7 +792,11 @@ export function LoginForm({
               <button
                 type="button"
                 onClick={() =>
-                  applyDemoCredentials("superadmin@school.edu", "superadmin123")
+                  applyDemoCredentials(
+                    "superadmin@school.edu",
+                    "superadmin123",
+                    "ADMIN",
+                  )
                 }
                 className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
                 disabled={isPending || isSendingOtp}
@@ -800,7 +806,7 @@ export function LoginForm({
               <button
                 type="button"
                 onClick={() =>
-                  applyDemoCredentials("admin@school.edu", "admin123")
+                  applyDemoCredentials("admin@school.edu", "admin123", "ADMIN")
                 }
                 className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
                 disabled={isPending || isSendingOtp}
@@ -810,7 +816,11 @@ export function LoginForm({
               <button
                 type="button"
                 onClick={() =>
-                  applyDemoCredentials("principal@school.edu", "principal123")
+                  applyDemoCredentials(
+                    "principal@school.edu",
+                    "principal123",
+                    "ADMIN",
+                  )
                 }
                 className="rounded-lg border border-[#006a4e]/20 bg-white px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-[#ecf8f4]"
                 disabled={isPending || isSendingOtp}

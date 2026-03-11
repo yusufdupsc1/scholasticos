@@ -12,7 +12,9 @@ const AUTH_SECRETS = [
   process.env.NEXTAUTH_SECRET,
 ].filter((secret): secret is string => Boolean(secret));
 
-const ALLOW_DEMO_LOGIN = process.env.ALLOW_DEMO_LOGIN === "true";
+const ALLOW_DEMO_LOGIN =
+  process.env.ALLOW_DEMO_LOGIN === "true" ||
+  (process.env.ALLOW_DEMO_LOGIN == null && process.env.NODE_ENV !== "production");
 const AUTH_DEBUG_LOGS = process.env.AUTH_DEBUG_LOGS === "true";
 
 const DEMO_INSTITUTION = {
