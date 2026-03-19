@@ -155,7 +155,8 @@ const LOGIN_PREFS_KEY = "bd-gps.auth.login-prefs";
 const OTP_COOLDOWN_SECONDS = 30;
 const USERNAME_PATTERN = /^[a-zA-Z0-9._-]{3,80}$/;
 
-function normalizeInstitutionSlug(value: string): string {
+function normalizeInstitutionSlug(
+        value: string): string {
   return value
     .trim()
     .toLowerCase()
@@ -212,7 +213,8 @@ export function LoginForm({
   } = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      institution: normalizeInstitutionSlug(lockedInstitution ?? "bd-gps"),
+      institution: normalizeInstitutionSlug(
+        lockedInstitution ?? "bd-gps"),
       scope: "ADMIN",
       loginMode: "PASSWORD",
       email: "",
@@ -226,7 +228,8 @@ export function LoginForm({
   const selectedScope = useWatch({ control, name: "scope" });
   const selectedMode = useWatch({ control, name: "loginMode" });
   const watchedInstitution = useWatch({ control, name: "institution" }) ?? "";
-  const institutionSlug = normalizeInstitutionSlug(watchedInstitution);
+  const institutionSlug = normalizeInstitutionSlug(
+        watchedInstitution);
   const scopeLocked = Boolean(lockedScope);
   // Owner mode removed
 
@@ -251,7 +254,8 @@ export function LoginForm({
       if (!raw) return;
       const parsed = JSON.parse(raw) as Partial<LoginFormValues>;
       if (parsed.institution) {
-        setValue("institution", normalizeInstitutionSlug(parsed.institution));
+        setValue("institution", normalizeInstitutionSlug(
+        parsed.institution));
       }
       if (
         parsed.scope &&
@@ -272,7 +276,8 @@ export function LoginForm({
 
   useEffect(() => {
     if (!lockedInstitution) return;
-    setValue("institution", normalizeInstitutionSlug(lockedInstitution), {
+    setValue("institution", normalizeInstitutionSlug(
+        lockedInstitution), {
       shouldValidate: true,
     });
   }, [lockedInstitution, setValue]);
@@ -340,6 +345,7 @@ export function LoginForm({
     startTransition(async () => {
       const result = await signIn("credentials", {
         institution: normalizeInstitutionSlug(
+        
           (lockedInstitution ?? values.institution ?? "").trim(),
         ),
         scope: lockedScope ?? values.scope,
@@ -386,6 +392,7 @@ export function LoginForm({
 
     const currentScope = lockedScope ?? getValues("scope");
     const currentInstitution = normalizeInstitutionSlug(
+        
       lockedInstitution ?? getValues("institution") ?? "",
     );
     const currentPhone = normalizePhone(getValues("phone") ?? "");
@@ -462,13 +469,7 @@ export function LoginForm({
   ) => {
     setValue("scope", lockedScope ?? scope, { shouldValidate: true });
     setValue("loginMode", "PASSWORD", { shouldValidate: true });
-    setValue(
-      "institution",
-      normalizeInstitutionSlug(
-        lockedInstitution === "bd-gps" ? lockedInstitution : "bd-gps",
-      ),
-      { shouldValidate: true },
-    );
+    setValue("institution", "bd-gps", { shouldValidate: true });
     setValue("email", email, { shouldValidate: true });
     setValue("password", password, { shouldValidate: true });
     setFormError(null);
@@ -584,7 +585,8 @@ export function LoginForm({
                 placeholder="e.g. bd-gps"
                 disabled={isPending || isSendingOtp || Boolean(lockedInstitution)}
                 onBlur={(e) => {
-                  const normalized = normalizeInstitutionSlug(e.target.value);
+                  const normalized = normalizeInstitutionSlug(
+        e.target.value);
                   setValue("institution", normalized, { shouldValidate: true });
                 }}
                 {...register("institution")}
@@ -613,7 +615,7 @@ export function LoginForm({
                 type="text"
                 autoComplete="username"
                 autoFocus
-                placeholder="admin@school.edu or Yusuf_Ali"
+                placeholder="admin@school.edu"
                 disabled={isPending || isSendingOtp}
                 className={errors.email ? "border-destructive" : ""}
                 {...register("email")}
