@@ -1,5 +1,0 @@
-
-> bd-gps@2.0.3 test:e2e /home/neo/Music/bd-gps
-> playwright test
-
- ELIFECYCLE  Command failed.
